@@ -2,6 +2,7 @@
 using Evento.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,7 +22,7 @@ namespace Evento.Services
 
         public IEnumerable<Congreso> GetCongresos()
         {
-            return this._unitOfWork.CongresoRepository.GetAll();
+            return this._unitOfWork.CongresoRepository.GetAll().Where(q => q.Estado == true); 
         }
 
         public Task PostCongreso(Congreso o)

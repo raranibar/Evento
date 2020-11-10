@@ -1,4 +1,5 @@
 ﻿using Evento.Core.Entities;
+using Evento.Core.Helper;
 using Evento.Core.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -22,12 +23,17 @@ namespace Evento.Services
 
         public IEnumerable<Usuario> GetUsuarios()
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.UsuarioRepository.GetAll();
         }
 
-        public Task PostUsuario(Usuario o)
+        public async Task PostUsuario(Usuario o)
         {
-            throw new NotImplementedException();
+            string passwordSalt = PasswordHasher.GenerateSalt();
+            string hashedPassword = PasswordHasher.GenerateHash(o.Clave, passwordSalt);
+            o.Clave = hashedPassword;
+            o.ClaveSalt = passwordSalt;
+            await this._unitOfWork.UsuarioRepository.Add(o);
+            await this._unitOfWork.SaveChangesAsync();
         }
 
         public Task<bool> PutUsuario(Usuario o)

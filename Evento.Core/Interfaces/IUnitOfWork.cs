@@ -11,6 +11,7 @@ namespace Evento.Core.Interfaces
         IRepository<Categoria> CategoriaRepository { get; }
         IRepository<Clasificador> ClasificadorRepository { get; }
         IRepository<Comentario> ComentarioRepository { get; }
+        IRepository<CongresoUsuario> CongresoUsuarioRepository { get; }
         IRepository<Congreso> CongresoRepository { get; }
         IRepository<DetalleClasificador> DetalleClasificadorRepository { get; }
         IRepository<EjeTematico> EjeTematicoRepository { get; }

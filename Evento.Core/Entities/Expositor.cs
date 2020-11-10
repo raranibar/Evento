@@ -15,7 +15,6 @@ namespace Evento.Core.Entities
         public string Pais { get; set; }
         public string Departamento { get; set; }
         public string ResumenCv { get; set; }
-        public DateTime FechaRegistro { get; set; }
         public int IdEjeTematico { get; set; }
         public int IdPersona { get; set; }
 

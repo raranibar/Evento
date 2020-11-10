@@ -2,6 +2,7 @@
 using Evento.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,7 +23,7 @@ namespace Evento.Services
 
         public IEnumerable<Categoria> GetCategorias()
         {
-            return this._unitOfWork.CategoriaRepository.GetAll();
+            return this._unitOfWork.CategoriaRepository.GetAll().Where(q => q.Estado == true);
         }
 
         public Task PostCategoria(Categoria o)

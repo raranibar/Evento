@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Evento.Core.Entities
 {
-    public partial class Participante : BaseEntity
+    public class CongresoUsuario : BaseEntity
     {
-        public string Factura { get; set; }
-        public int? IdPersona { get; set; }
         public int IdCongreso { get; set; }
+        public int IdUsuario { get; set; }
 
+        public virtual Usuario IdUsuarioNavigation { get; set; }
         public virtual Congreso IdCongresoNavigation { get; set; }
-        public virtual Persona IdPersonaNavigation { get; set; }
     }
 }

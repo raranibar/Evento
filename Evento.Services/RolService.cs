@@ -2,6 +2,7 @@
 using Evento.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,7 +22,7 @@ namespace Evento.Services
 
         public IEnumerable<Rol> GetRoles()
         {
-            throw new NotImplementedException();
+            return _unitOfWork.RolRepository.GetAll().Where(q => q.Estado == true);
         }
 
         public Task PostRol(Rol o)

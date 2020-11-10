@@ -20,6 +20,11 @@ namespace Evento.Infrastructure.Mappings
             CreateMap<Comentario, ComentarioDto>();
             CreateMap<ComentarioDto, Comentario>();
 
+            CreateMap<CongresoUsuario, CongresoUsuarioDto>();
+            CreateMap<CongresoUsuarioDto, CongresoUsuario>();
+            CreateMap<CongresoUsuario, PersonaUsuarioDto>();
+            CreateMap<PersonaUsuarioDto, CongresoUsuario>();
+
             CreateMap<Congreso, CongresoDto>();
             CreateMap<CongresoDto, Congreso>();
 
@@ -58,6 +63,8 @@ namespace Evento.Infrastructure.Mappings
 
             CreateMap<Persona, PersonaDto>();
             CreateMap<PersonaDto, Persona>();
+            CreateMap<Persona, PersonaUsuarioDto>();
+            CreateMap<PersonaUsuarioDto, Persona>();
 
             CreateMap<RedSocial, RedSocialDto>();
             CreateMap<RedSocialDto, RedSocial>();
@@ -67,9 +74,13 @@ namespace Evento.Infrastructure.Mappings
 
             CreateMap<Usuario, UsuarioDto>();
             CreateMap<UsuarioDto, Usuario>();
+            CreateMap<Usuario, PersonaUsuarioDto>();
+            CreateMap<PersonaUsuarioDto, Usuario>();
 
             CreateMap<UsuarioRol, UsuarioRolDto>();
             CreateMap<UsuarioRolDto, UsuarioRol>();
+            CreateMap<UsuarioRol, PersonaUsuarioDto>();
+            CreateMap<PersonaUsuarioDto, UsuarioRol>();
         }            
     }
 }

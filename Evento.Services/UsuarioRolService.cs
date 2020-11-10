@@ -25,9 +25,10 @@ namespace Evento.Services
             throw new NotImplementedException();
         }
 
-        public Task PostUsuarioRol(UsuarioRol o)
+        public async Task PostUsuarioRol(UsuarioRol o)
         {
-            throw new NotImplementedException();
+            await this._unitOfWork.UsuarioRolRepository.Add(o);
+            await this._unitOfWork.SaveChangesAsync();
         }
 
         public Task<bool> PutUsuarioRol(UsuarioRol o)

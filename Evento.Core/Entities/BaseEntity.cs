@@ -7,6 +7,7 @@ namespace Evento.Core.Entities
     public abstract class BaseEntity
     {
         public int Id { get; set; }
-        public bool Estado { get; set; }
+        public bool Estado { get; set; } = true;
+        public DateTime FechaRegistro { get; set; } = DateTime.Now;
     }
 }

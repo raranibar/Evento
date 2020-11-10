@@ -7,35 +7,34 @@ using System.Threading.Tasks;
 
 namespace Evento.Services
 {
-    public class PersonaService : IPersonaService
+    public class CongresoUsuarioService : ICongresoUsuarioService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public PersonaService(IUnitOfWork unitOfWork)
+        public CongresoUsuarioService(IUnitOfWork unitOfWork)
         {
             this._unitOfWork = unitOfWork;
         }
-
-        public Task<Persona> GetPersona(int id)
+        public Task<CongresoUsuario> GetCongresoUsuario(int id)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Persona> GetPersonas()
+        public IEnumerable<CongresoUsuario> GetCongresoUsuarios()
         {
             throw new NotImplementedException();
         }
 
-        public async Task PostPersona(Persona o)
+        public async Task PostCongresoUsuario(CongresoUsuario o)
         {
-            await this._unitOfWork.PersonaRepository.Add(o);
+            await this._unitOfWork.CongresoUsuarioRepository.Add(o);
             await this._unitOfWork.SaveChangesAsync();
         }
 
-        public Task<bool> PutPersona(Persona o)
+        public Task<bool> PutCongresoUsuario(CongresoUsuario o)
         {
             throw new NotImplementedException();
         }
-        public Task<bool> DeletePersona(int id)
+        public Task<bool> DeleteCongresoUsuario(int id)
         {
             throw new NotImplementedException();
         }
