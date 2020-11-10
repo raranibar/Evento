@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Evento.Api", "Evento.Api\Evento.Api.csproj", "{C7BDCD25-CFC7-43C0-8615-897B1BB97EF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Evento.Api", "Evento.Api\Evento.Api.csproj", "{C7BDCD25-CFC7-43C0-8615-897B1BB97EF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Evento.Core", "Evento.Core\Evento.Core.csproj", "{501DF33D-61D9-4D35-9B10-162F52300663}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Evento.Core", "Evento.Core\Evento.Core.csproj", "{501DF33D-61D9-4D35-9B10-162F52300663}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Evento.Infrastructure", "Evento.Infrastructure\Evento.Infrastructure.csproj", "{E2E312C7-74BE-41F1-9FAD-D685520B267D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Evento.Infrastructure", "Evento.Infrastructure\Evento.Infrastructure.csproj", "{E2E312C7-74BE-41F1-9FAD-D685520B267D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Evento.Services", "Evento.Services\Evento.Services.csproj", "{B39A62E9-1971-4072-990B-18C585255595}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Evento.Services", "Evento.Services\Evento.Services.csproj", "{B39A62E9-1971-4072-990B-18C585255595}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
