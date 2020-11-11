@@ -31,7 +31,7 @@ namespace Evento.Api
                 builder => builder.AllowAnyOrigin()
                 ));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            var conex = Configuration.GetConnectionString("EventoDB");
+            var conex = Configuration.GetConnectionString("EventoAzure");
             services.AddControllers();
             services.AddDbContext<EventoDevContext>(options =>
                 options.UseSqlServer(conex));
