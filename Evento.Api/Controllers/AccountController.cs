@@ -63,9 +63,9 @@ namespace Evento.Api.Controllers
             return Ok(response);            
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("Verify")]
-        public ActionResult GetVerify(LoginDto loginDto)
+        public ActionResult PostVerify(LoginDto loginDto)
         {
             var response = new ApiResponse();
             try
