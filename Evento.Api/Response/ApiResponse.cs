@@ -5,13 +5,17 @@ using System.Threading.Tasks;
 
 namespace Evento.Api.Response
 {
-    public class ApiResponse<T>
+    public class ApiResponse
     {
-        public T Data { get; set; }
+        public int Exito { get; set; }
+        public string Mensaje { get; set; }
+        public Object Data { get; set; }
 
-        public ApiResponse(T data)
+        public ApiResponse()
         {
-            Data = data;
+            Data = null;
+            Exito = 0;
+            Mensaje = string.Empty;
         }
     }
 }

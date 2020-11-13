@@ -28,20 +28,35 @@ namespace Evento.Api.Controllers
         [HttpGet]
         public IActionResult GetCongresos()
         {
-            var result = _congresoService.GetCongresos();
-            var resultDto = _mapper.Map<IEnumerable<CongresoDto>>(result);
-
-            var response = new ApiResponse<IEnumerable<CongresoDto>>(resultDto);
+            var response = new ApiResponse();
+            try
+            {
+                var result = _congresoService.GetCongresos();
+                var resultDto = _mapper.Map<IEnumerable<CongresoDto>>(result);
+                response.Exito = 1;
+                response.Data = resultDto;
+            }
+            catch(Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
             return Ok(response);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCongreso(int id)
         {
-            var result = await _congresoService.GetCongreso(id);
-            var resultDto = _mapper.Map<CongresoDto>(result);
-
-            var response = new  ApiResponse<CongresoDto>(resultDto);
+            var response = new ApiResponse();
+            try
+            {
+                var result = await _congresoService.GetCongreso(id);
+                var resultDto = _mapper.Map<CongresoDto>(result);
+                response.Exito = 1;
+                response.Data = resultDto;
+            }
+            catch (Exception ex) {
+                response.Mensaje = ex.Message;
+            }            
             return Ok(response);
         }
    
@@ -49,32 +64,56 @@ namespace Evento.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> PostCongreso(CongresoDto CongresoDto)
         {
-            var oCongreso = _mapper.Map<Congreso>(CongresoDto);
-            await _congresoService.PostCongreso(oCongreso);
+            var response = new ApiResponse();
+            try
+            {
+                var oCongreso = _mapper.Map<Congreso>(CongresoDto);
+                await _congresoService.PostCongreso(oCongreso);
+                CongresoDto = _mapper.Map<CongresoDto>(oCongreso);
 
-            CongresoDto = _mapper.Map<CongresoDto>(oCongreso);
-            var response = new ApiResponse<CongresoDto>(CongresoDto);
+                response.Exito = 1;
+                response.Data = CongresoDto;                
+            }catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
             return Ok(response);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCongreso(CongresoDto CongresoDto, int id)
         {
-            var oCongreso = _mapper.Map<Congreso>(CongresoDto);
-            bool result = await _congresoService.PutCongreso(oCongreso);
-
-            var response = new ApiResponse<bool>(result);
-            return Ok(response);
+            var response = new ApiResponse();
+            try
+            {
+                var oCongreso = _mapper.Map<Congreso>(CongresoDto);
+                bool result = await _congresoService.PutCongreso(oCongreso);
+                response.Exito = 1;
+                response.Data = result;
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);            
 
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCongreso(int id)
         {
-            bool result = await this._congresoService.DeleteCongreso(id);
-
-            var response = new ApiResponse<bool>(result);
-            return Ok(response);
+            var response = new ApiResponse();
+            try
+            {
+                bool result = await this._congresoService.DeleteCongreso(id);
+                response.Exito = 1;
+                response.Data =result;
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);            
         }
     }
 }

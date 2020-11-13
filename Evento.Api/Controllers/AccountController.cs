@@ -38,34 +38,101 @@ namespace Evento.Api.Controllers
         [Route("Register")]
         public async Task<ActionResult> PostRegister(PersonaUsuarioDto personaUsuarioDto)
         {
-
-            var oPersona = _mapper.Map<Persona>(personaUsuarioDto);
-            await _personaService.PostPersona(oPersona);
-            var oUsuario = _mapper.Map<Usuario>(personaUsuarioDto);
-            oUsuario.IdPersona = oPersona.Id;
-            await _usuarioService.PostUsuario(oUsuario);
-            var oCongresoUsuario = _mapper.Map<CongresoUsuario>(personaUsuarioDto);
-            oCongresoUsuario.IdCongreso = oUsuario.IdCongreso;
-            oCongresoUsuario.IdUsuario = oUsuario.Id;
-            await _congresoUsuarioService.PostCongresoUsuario(oCongresoUsuario);
-            var oUsuarioRol = _mapper.Map<UsuarioRol>(personaUsuarioDto);
-            oUsuarioRol.IdUsuario = oUsuario.Id;
-            await _usuarioRolService.PostUsuarioRol(oUsuarioRol);
-
-            var response = new ApiResponse<bool>(true);
-            return Ok(response);
-
+            var response = new ApiResponse();            
+            var personaDocNum = _personaService.GetPersonas().Where(
+                q => q.Estado == true && 
+                q.NumDocumento == personaUsuarioDto.NumDocumento &&
+                q.IdTipoDocumento == personaUsuarioDto.IdTipoDocumento
+            ).FirstOrDefault();
+            var usuario = _usuarioService.GetUsuarios().Where(
+                q=> q.Estado == true && q.Email == personaUsuarioDto.Email
+                ).FirstOrDefault();
+            if (personaDocNum != null)
+            {
+                response.Mensaje = "El tipo de documento y el número ya estan Registrados.";
+                response.Data = false;
+            }
+            else if (usuario != null){
+                response.Mensaje += " El email ya esta registrado.";
+                response.Data = false;
+            }
+            else {
+                response.Exito = 1;
+                response = await RegistroUsuario(personaUsuarioDto, response);
+            }                                    
+            return Ok(response);            
         }
 
         [HttpGet]
         [Route("Verify")]
         public ActionResult GetVerify(LoginDto loginDto)
         {
-            var oUsuario = _usuarioService.GetUsuarios().FirstOrDefault(q => q.Email == loginDto.Login && q.Estado == true);
-            if (PasswordHasher.ValidatePassword(loginDto.Password, oUsuario.Clave, oUsuario.ClaveSalt))
-                return Ok(true);
-            else
-                return BadRequest(false);
+            var response = new ApiResponse();
+            try
+            {
+                var oUsuario = _usuarioService.GetUsuarios().FirstOrDefault(q => q.Email == loginDto.Login && q.Estado == true);
+                if (oUsuario != null)
+                {
+                    if (PasswordHasher.ValidatePassword(loginDto.Password, oUsuario.Clave, oUsuario.ClaveSalt))
+                    {
+                        response.Exito = 1;
+                        response.Data = true;
+                    }
+                    else
+                    {
+                        response.Exito = 0;
+                        response.Mensaje = "Usuario y Password Incorrectos";
+                        response.Data = false;
+                    }
+                }
+                else
+                {
+                    response.Exito = 0;
+                    response.Mensaje = "Usuario No registrados";
+                    response.Data = false;
+                }
+                                    
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);            
+        }
+
+        private async Task<ApiResponse> RegistroUsuario(PersonaUsuarioDto personaUsuarioDto, ApiResponse response)
+        {
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+                    var oPersona = _mapper.Map<Persona>(personaUsuarioDto);
+                    await _personaService.PostPersona(oPersona);
+
+                    var oUsuario = _mapper.Map<Usuario>(personaUsuarioDto);
+                    oUsuario.IdPersona = oPersona.Id;
+                    await _usuarioService.PostUsuario(oUsuario);
+
+                    var oCongresoUsuario = _mapper.Map<CongresoUsuario>(personaUsuarioDto);
+                    oCongresoUsuario.IdCongreso = oUsuario.IdCongreso;
+                    oCongresoUsuario.IdUsuario = oUsuario.Id;
+                    await _congresoUsuarioService.PostCongresoUsuario(oCongresoUsuario);
+
+                    var oUsuarioRol = _mapper.Map<UsuarioRol>(personaUsuarioDto);
+                    oUsuarioRol.IdUsuario = oUsuario.Id;
+                    await _usuarioRolService.PostUsuarioRol(oUsuarioRol);
+
+                    response.Exito = 1;
+                    response.Data = true;
+                    transaction.Complete();
+                }
+                catch (TransactionException ex)
+                {
+
+                    response.Mensaje = String.Format(" {0} - {1}", ex.Message, ex.InnerException);
+                }
+                return response;
+            }
         }
     }
 }
