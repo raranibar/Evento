@@ -16,7 +16,6 @@ namespace Evento.Core.Entities
         public string Latitud { get; set; }
         public string Longitud { get; set; }
         public int Raiting { get; set; }
-        public DateTime FechaRegistro { get; set; }
         public int IdPersona { get; set; }
         public int IdCategoria { get; set; }
 

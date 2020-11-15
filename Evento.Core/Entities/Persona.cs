@@ -21,7 +21,6 @@ namespace Evento.Core.Entities
         public string Direccion { get; set; }
         public string NumDocumento { get; set; }
         public int IdTipoDocumento { get; set; }
-        public DateTime FechaRegistro { get; set; }
 
         public virtual DetalleClasificador IdGeneroNavigation { get; set; }
         public virtual DetalleClasificador IdTipoDocumentoNavigation { get; set; }

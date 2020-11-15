@@ -36,6 +36,7 @@ namespace Evento.Infrastructure.Data
         public virtual DbSet<Rol> Rol { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
         public virtual DbSet<UsuarioRol> UsuarioRol { get; set; }
+        public virtual DbSet<CongresoUsuario> CongresoUsuario { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -109,6 +110,8 @@ namespace Evento.Infrastructure.Data
                     .IsRequired()
                     .HasMaxLength(50);
 
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
                 entity.HasOne(d => d.IdClasificadorNavigation)
                     .WithMany(p => p.DetalleClasificador)
                     .HasForeignKey(d => d.IdClasificador)
@@ -169,6 +172,10 @@ namespace Evento.Infrastructure.Data
                 entity.Property(e => e.Direccion)
                     .IsRequired()
                     .HasMaxLength(250);
+
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
 
                 entity.HasOne(d => d.IdEmprendedorNavigation)
                     .WithMany(p => p.EmprendedorRedSocial)
@@ -414,6 +421,7 @@ namespace Evento.Infrastructure.Data
 
             modelBuilder.Entity<UsuarioRol>(entity =>
             {
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
                 entity.HasOne(d => d.IdRolNavigation)
                     .WithMany(p => p.UsuarioRol)
                     .HasForeignKey(d => d.IdRol)
@@ -425,6 +433,22 @@ namespace Evento.Infrastructure.Data
                     .HasForeignKey(d => d.IdUsuario)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UsuarioRol_Usuario");
+            });
+
+            modelBuilder.Entity<CongresoUsuario>(entity =>
+            {
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+                entity.HasOne(d => d.IdCongresoNavigation)
+                    .WithMany(p => p.CongresoUsuario)
+                    .HasForeignKey(d => d.IdCongreso)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("K_CongresoUsuario_Congreso");
+
+                entity.HasOne(d => d.IdUsuarioNavigation)
+                    .WithMany(p => p.CongresoUsuario)
+                    .HasForeignKey(d => d.IdUsuario)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CongresoUsuario_Usuario");
             });
         }
     }

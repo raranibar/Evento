@@ -11,7 +11,6 @@ namespace Evento.Core.Entities
         }
 
         public DateTime Fecha1 { get; set; }
-        public DateTime FechaRegistro { get; set; }
         public int IdCongreso { get; set; }
 
         public virtual Congreso IdCongresoNavigation { get; set; }

@@ -27,11 +27,10 @@ namespace Evento.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options => options.AddDefaultPolicy(
-                builder => builder.AllowAnyOrigin()
-                ));
+            services.AddCors();
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            var conex = Configuration.GetConnectionString("EventoDB");
+            var conex = Configuration.GetConnectionString("EventoAzure");
             services.AddControllers();
             services.AddDbContext<EventoDevContext>(options =>
                 options.UseSqlServer(conex));
@@ -39,6 +38,7 @@ namespace Evento.Api
             services.AddTransient<ICategoriaService, CategoriaService>();
             services.AddTransient<IClasificadorService, ClasificadorService>();
             services.AddTransient<IComentarioService, ComentarioService>();
+            services.AddTransient<ICongresoUsuarioService, CongresoUsuarioService>();
             services.AddTransient<ICongresoService, CongresoService>();
             services.AddTransient<IDetalleClasificadorService, DetalleClasificadorService>();
             services.AddTransient<IEjeTematicoService, EjeTematicoService>();
@@ -72,7 +72,11 @@ namespace Evento.Api
 
             app.UseRouting();
 
-            app.UseCors();
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials());
 
             app.UseAuthorization();
 

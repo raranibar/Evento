@@ -12,7 +12,6 @@ namespace Evento.Core.Entities
 
         public int Nombre { get; set; }
         public string Logo { get; set; }
-        public DateTime FechaRegistro { get; set; }
 
         public virtual DetalleClasificador IdRedSocialNavigation { get; set; }
         public virtual ICollection<EmprendedorRedSocial> EmprendedorRedSocial { get; set; }

@@ -13,11 +13,11 @@ namespace Evento.Core.Entities
         public string Email { get; set; }
         public string Clave { get; set; }
         public string ClaveSalt { get; set; }
-        public DateTime FechaRegistro { get; set; }
         public int IdPersona { get; set; }
         public int IdCongreso { get; set; }
 
         public virtual Persona IdPersonaNavigation { get; set; }
         public virtual ICollection<UsuarioRol> UsuarioRol { get; set; }
+        public virtual ICollection<CongresoUsuario> CongresoUsuario { get; set; }
     }
 }

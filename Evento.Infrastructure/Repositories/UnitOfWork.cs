@@ -13,6 +13,7 @@ namespace Evento.Infrastructure.Repositories
         private readonly IRepository<Categoria> _categoriaRepository;
         private readonly IRepository<Clasificador> _clasificadorRepository;
         private readonly IRepository<Comentario> _comentarioRepository;
+        private readonly IRepository<CongresoUsuario> _congresoUsuarioRepository;
         private readonly IRepository<Congreso> _congresoRepository;
         private readonly IRepository<DetalleClasificador> _detalleClasificadorRepository;
         private readonly IRepository<EjeTematico> _ejeTematicoRepository;
@@ -41,6 +42,7 @@ namespace Evento.Infrastructure.Repositories
         public IRepository<Categoria> CategoriaRepository => _categoriaRepository ?? new BaseRepository<Categoria>(_context);
         public IRepository<Clasificador> ClasificadorRepository => _clasificadorRepository ?? new BaseRepository<Clasificador>(_context);
         public IRepository<Comentario> ComentarioRepository => _comentarioRepository ?? new BaseRepository<Comentario>(_context);
+        public IRepository<CongresoUsuario> CongresoUsuarioRepository => _congresoUsuarioRepository ?? new BaseRepository<CongresoUsuario>(_context);
         public IRepository<Congreso> CongresoRepository => _congresoRepository ?? new BaseRepository<Congreso>(_context);
         public IRepository<DetalleClasificador> DetalleClasificadorRepository => _detalleClasificadorRepository ?? new BaseRepository<DetalleClasificador>(_context);
         public IRepository<EjeTematico> EjeTematicoRepository => _ejeTematicoRepository ?? new BaseRepository<EjeTematico>(_context);

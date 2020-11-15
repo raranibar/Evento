@@ -13,7 +13,6 @@ namespace Evento.Core.Entities
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
         public string Logo { get; set; }
-        public DateTime FechaRegistro { get; set; }
         public int IdCongreso { get; set; }
 
         public virtual Congreso IdCongresoNavigation { get; set; }

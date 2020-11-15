@@ -20,7 +20,6 @@ namespace Evento.Core.Entities
         public string Direccion { get; set; }
         public string Responsable { get; set; }
         public string Logo { get; set; }
-        public DateTime FechaRegistro { get; set; }
 
         public virtual ICollection<Categoria> Categoria { get; set; }
         public virtual ICollection<EjeTematico> EjeTematico { get; set; }
@@ -28,5 +27,6 @@ namespace Evento.Core.Entities
         public virtual ICollection<PaginaInformacion> PaginaInformacion { get; set; }
         public virtual ICollection<PaginaMemoria> PaginaMemoria { get; set; }
         public virtual ICollection<Participante> Participante { get; set; }
+        public virtual ICollection<CongresoUsuario> CongresoUsuario { get; set; }
     }
 }
