@@ -12,6 +12,8 @@ namespace Evento.Infrastructure.Repositories
     {
         private readonly IRepository<Categoria> _categoriaRepository;
         private readonly IRepository<Clasificador> _clasificadorRepository;
+        private readonly IRepository<ClasificadorPais> _clasificadorPaisRepository;
+        private readonly IRepository<ClasificadorCiudad> _clasificadorCiudadRepository;
         private readonly IRepository<Comentario> _comentarioRepository;
         private readonly IRepository<CongresoUsuario> _congresoUsuarioRepository;
         private readonly IRepository<Congreso> _congresoRepository;
@@ -41,6 +43,8 @@ namespace Evento.Infrastructure.Repositories
 
         public IRepository<Categoria> CategoriaRepository => _categoriaRepository ?? new BaseRepository<Categoria>(_context);
         public IRepository<Clasificador> ClasificadorRepository => _clasificadorRepository ?? new BaseRepository<Clasificador>(_context);
+        public IRepository<ClasificadorPais> ClasificadorPaisRepository => _clasificadorPaisRepository ?? new BaseRepository<ClasificadorPais>(_context);
+        public IRepository<ClasificadorCiudad> ClasificadorCiudadRepository => _clasificadorCiudadRepository ?? new BaseRepository<ClasificadorCiudad>(_context);
         public IRepository<Comentario> ComentarioRepository => _comentarioRepository ?? new BaseRepository<Comentario>(_context);
         public IRepository<CongresoUsuario> CongresoUsuarioRepository => _congresoUsuarioRepository ?? new BaseRepository<CongresoUsuario>(_context);
         public IRepository<Congreso> CongresoRepository => _congresoRepository ?? new BaseRepository<Congreso>(_context);
