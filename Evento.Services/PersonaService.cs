@@ -17,12 +17,12 @@ namespace Evento.Services
 
         public Task<Persona> GetPersona(int id)
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.PersonaRepository.GetById(id);
         }
 
         public IEnumerable<Persona> GetPersonas()
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.PersonaRepository.GetAll();
         }
 
         public async Task PostPersona(Persona o)
@@ -31,13 +31,17 @@ namespace Evento.Services
             await this._unitOfWork.SaveChangesAsync();
         }
 
-        public Task<bool> PutPersona(Persona o)
+        public async Task<bool> PutPersona(Persona o)
         {
-            throw new NotImplementedException();
+            this._unitOfWork.PersonaRepository.Update(o);
+            await this._unitOfWork.SaveChangesAsync();
+            return true;
         }
-        public Task<bool> DeletePersona(int id)
+        public async Task<bool> DeletePersona(int id)
         {
-            throw new NotImplementedException();
+            await this._unitOfWork.PersonaRepository.Delete(id);
+            await this._unitOfWork.SaveChangesAsync();
+            return true;
         }
     }
 }

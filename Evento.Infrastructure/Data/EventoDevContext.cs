@@ -1,7 +1,5 @@
-﻿using System;
-using Evento.Core.Entities;
+﻿using Evento.Core.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Evento.Infrastructure.Data
 {
@@ -18,8 +16,11 @@ namespace Evento.Infrastructure.Data
 
         public virtual DbSet<Categoria> Categoria { get; set; }
         public virtual DbSet<Clasificador> Clasificador { get; set; }
+        public virtual DbSet<ClasificadorCiudad> ClasificadorCiudad { get; set; }
+        public virtual DbSet<ClasificadorPais> ClasificadorPais { get; set; }
         public virtual DbSet<Comentario> Comentario { get; set; }
         public virtual DbSet<Congreso> Congreso { get; set; }
+        public virtual DbSet<CongresoUsuario> CongresoUsuario { get; set; }
         public virtual DbSet<DetalleClasificador> DetalleClasificador { get; set; }
         public virtual DbSet<EjeTematico> EjeTematico { get; set; }
         public virtual DbSet<Emprendedor> Emprendedor { get; set; }
@@ -36,7 +37,6 @@ namespace Evento.Infrastructure.Data
         public virtual DbSet<Rol> Rol { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
         public virtual DbSet<UsuarioRol> UsuarioRol { get; set; }
-        public virtual DbSet<CongresoUsuario> CongresoUsuario { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -66,6 +66,32 @@ namespace Evento.Infrastructure.Data
                 entity.Property(e => e.Descripcion)
                     .IsRequired()
                     .HasMaxLength(50);
+
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<ClasificadorCiudad>(entity =>
+            {
+                entity.Property(e => e.Ciudad)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
+                entity.HasOne(d => d.IdPaisNavigation)
+                    .WithMany(p => p.ClasificadorCiudad)
+                    .HasForeignKey(d => d.IdPais)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ClasificadorCiudad_ClasificadorPais");
+            });
+
+            modelBuilder.Entity<ClasificadorPais>(entity =>
+            {
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
+                entity.Property(e => e.Pais)
+                    .IsRequired()
+                    .HasMaxLength(255);
             });
 
             modelBuilder.Entity<Comentario>(entity =>
@@ -104,13 +130,30 @@ namespace Evento.Infrastructure.Data
                     .HasMaxLength(255);
             });
 
+            modelBuilder.Entity<CongresoUsuario>(entity =>
+            {
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
+                entity.HasOne(d => d.IdCongresoNavigation)
+                    .WithMany(p => p.CongresoUsuario)
+                    .HasForeignKey(d => d.IdCongreso)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CongresoUsuario_Congreso");
+
+                entity.HasOne(d => d.IdUsuarioNavigation)
+                    .WithMany(p => p.CongresoUsuario)
+                    .HasForeignKey(d => d.IdUsuario)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_CongresoUsuario_Usuario");
+            });
+
             modelBuilder.Entity<DetalleClasificador>(entity =>
             {
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
                 entity.Property(e => e.Nombre)
                     .IsRequired()
                     .HasMaxLength(50);
-
-                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
 
                 entity.HasOne(d => d.IdClasificadorNavigation)
                     .WithMany(p => p.DetalleClasificador)
@@ -154,6 +197,10 @@ namespace Evento.Infrastructure.Data
                     .IsRequired()
                     .HasMaxLength(250);
 
+                entity.Property(e => e.Ubicacion)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
                 entity.HasOne(d => d.IdCategoriaNavigation)
                     .WithMany(p => p.Emprendedor)
                     .HasForeignKey(d => d.IdCategoria)
@@ -175,8 +222,6 @@ namespace Evento.Infrastructure.Data
 
                 entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
 
-                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
-
                 entity.HasOne(d => d.IdEmprendedorNavigation)
                     .WithMany(p => p.EmprendedorRedSocial)
                     .HasForeignKey(d => d.IdEmprendedor)
@@ -192,10 +237,6 @@ namespace Evento.Infrastructure.Data
 
             modelBuilder.Entity<Expositor>(entity =>
             {
-                entity.Property(e => e.Departamento)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
                 entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
 
                 entity.Property(e => e.Institucion)
@@ -205,10 +246,6 @@ namespace Evento.Infrastructure.Data
                 entity.Property(e => e.NombreExposicion)
                     .IsRequired()
                     .HasMaxLength(200);
-
-                entity.Property(e => e.Pais)
-                    .IsRequired()
-                    .HasMaxLength(100);
 
                 entity.Property(e => e.ResumenCv)
                     .IsRequired()
@@ -335,6 +372,7 @@ namespace Evento.Infrastructure.Data
                 entity.HasOne(d => d.IdPersonaNavigation)
                     .WithMany(p => p.Participante)
                     .HasForeignKey(d => d.IdPersona)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Participante_Persona");
             });
 
@@ -366,10 +404,23 @@ namespace Evento.Infrastructure.Data
                     .IsRequired()
                     .HasMaxLength(250);
 
+                entity.HasOne(d => d.IdCiudadNavigation)
+                    .WithMany(p => p.Persona)
+                    .HasForeignKey(d => d.IdCiudad)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Persona_ClasificadorCiudad");
+
                 entity.HasOne(d => d.IdGeneroNavigation)
                     .WithMany(p => p.PersonaIdGeneroNavigation)
                     .HasForeignKey(d => d.IdGenero)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Persona_DetalleClasificadorGenero");
+
+                entity.HasOne(d => d.IdPaisNavigation)
+                    .WithMany(p => p.Persona)
+                    .HasForeignKey(d => d.IdPais)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Persona_ClasificadorPais");
 
                 entity.HasOne(d => d.IdTipoDocumentoNavigation)
                     .WithMany(p => p.PersonaIdTipoDocumentoNavigation)
@@ -383,6 +434,10 @@ namespace Evento.Infrastructure.Data
                 entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
 
                 entity.Property(e => e.Logo)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Nombre)
                     .IsRequired()
                     .HasMaxLength(50);
             });
@@ -422,6 +477,7 @@ namespace Evento.Infrastructure.Data
             modelBuilder.Entity<UsuarioRol>(entity =>
             {
                 entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
                 entity.HasOne(d => d.IdRolNavigation)
                     .WithMany(p => p.UsuarioRol)
                     .HasForeignKey(d => d.IdRol)
@@ -433,22 +489,6 @@ namespace Evento.Infrastructure.Data
                     .HasForeignKey(d => d.IdUsuario)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UsuarioRol_Usuario");
-            });
-
-            modelBuilder.Entity<CongresoUsuario>(entity =>
-            {
-                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
-                entity.HasOne(d => d.IdCongresoNavigation)
-                    .WithMany(p => p.CongresoUsuario)
-                    .HasForeignKey(d => d.IdCongreso)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("K_CongresoUsuario_Congreso");
-
-                entity.HasOne(d => d.IdUsuarioNavigation)
-                    .WithMany(p => p.CongresoUsuario)
-                    .HasForeignKey(d => d.IdUsuario)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_CongresoUsuario_Usuario");
             });
         }
     }

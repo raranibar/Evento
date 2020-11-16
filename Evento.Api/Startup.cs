@@ -37,6 +37,8 @@ namespace Evento.Api
 
             services.AddTransient<ICategoriaService, CategoriaService>();
             services.AddTransient<IClasificadorService, ClasificadorService>();
+            services.AddTransient<IClasificadorPaisService, ClasificadorPaisService>();
+            services.AddTransient<IClasificadorCiudadService, ClasificadorCiudadService>();
             services.AddTransient<IComentarioService, ComentarioService>();
             services.AddTransient<ICongresoUsuarioService, CongresoUsuarioService>();
             services.AddTransient<ICongresoService, CongresoService>();

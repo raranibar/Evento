@@ -27,11 +27,19 @@ namespace Evento.Api.Controllers
         [HttpGet]
         public IActionResult GetRoles()
         {
-            var result = _rolService.GetRoles();
-            var resultDto = _mapper.Map<IEnumerable<RolDto>>(result);
-
-            var response = new ApiResponse<IEnumerable<RolDto>>(resultDto);
-            return Ok(response);
+            var response = new ApiResponse();
+            try
+            {
+                var result = _rolService.GetRoles();
+                var resultDto = _mapper.Map<IEnumerable<RolDto>>(result);
+                response.Exito = 1;
+                response.Data = resultDto;
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);            
         }
     }
 }
