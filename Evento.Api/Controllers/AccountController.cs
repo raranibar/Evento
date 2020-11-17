@@ -47,19 +47,28 @@ namespace Evento.Api.Controllers
             var usuario = _usuarioService.GetUsuarios().Where(
                 q=> q.Estado == true && q.Email == personaUsuarioDto.Email
                 ).FirstOrDefault();
-            if (personaDocNum != null)
+            if (!RegexUtilities.IsValidEmail(usuario.Email)) {
+                response.Mensaje = "El formato del correo electrónico no es el correcto.";
+                response.Data = false;
+            }
+            else
             {
-                response.Mensaje = "El tipo de documento y el número ya estan Registrados.";
-                response.Data = false;
-            }
-            else if (usuario != null){
-                response.Mensaje += " El email ya esta registrado.";
-                response.Data = false;
-            }
-            else {
-                response.Exito = 1;
-                response = await RegistroUsuario(personaUsuarioDto, response);
-            }                                    
+                if (personaDocNum != null)
+                {
+                    response.Mensaje = "El tipo de documento y el número ya estan Registrados.";
+                    response.Data = false;
+                }
+                else if (usuario != null)
+                {
+                    response.Mensaje += " El email ya esta registrado.";
+                    response.Data = false;
+                }
+                else
+                {
+                    response.Exito = 1;
+                    response = await RegistroUsuario(personaUsuarioDto, response);
+                }
+            }                                               
             return Ok(response);            
         }
 
