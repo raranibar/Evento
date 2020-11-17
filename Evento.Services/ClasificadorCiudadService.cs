@@ -21,12 +21,13 @@ namespace Evento.Services
 
         public Task<ClasificadorCiudad> GetClasificadorCiudad(int id)
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.ClasificadorCiudadRepository.GetById(id);
         }
 
         public IEnumerable<ClasificadorCiudad> GetClasificadorCiudades()
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.ClasificadorCiudadRepository.GetAll();
+
         }
 
         public Task PostClasificadorCiudad(ClasificadorCiudad o)

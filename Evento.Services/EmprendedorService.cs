@@ -17,7 +17,8 @@ namespace Evento.Services
 
         public Task<Emprendedor> GetEmprendedor(int id)
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.EmprendedorRepository.GetById(id);
+
         }
 
         public IEnumerable<Emprendedor> GetEmprendedores()
@@ -25,9 +26,10 @@ namespace Evento.Services
             throw new NotImplementedException();
         }
 
-        public Task PostEmprendedor(Emprendedor o)
+        public async Task  PostEmprendedor(Emprendedor o)
         {
-            throw new NotImplementedException();
+            await this._unitOfWork.EmprendedorRepository.Add(o);
+            await this._unitOfWork.SaveChangesAsync();
         }
 
         public Task<bool> PutEmprendedor(Emprendedor o)

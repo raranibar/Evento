@@ -13,7 +13,6 @@ namespace Evento.Core.Entities
 
         public string Pais { get; set; }
 
-
         public virtual ICollection<ClasificadorCiudad> ClasificadorCiudad { get; set; }
         public virtual ICollection<Persona> Persona { get; set; }
     }

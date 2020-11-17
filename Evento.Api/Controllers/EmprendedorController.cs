@@ -14,32 +14,25 @@ namespace Evento.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaisController : ControllerBase
+    public class EmprendedorController : ControllerBase
     {
-        private readonly IClasificadorPaisService _clasificadorPaisService;
-        private readonly IClasificadorCiudadService _clasificadorCiudadService;
+        private readonly IEmprendedorService _emprendedorService;
         private readonly IMapper _mapper;
-        public PaisController(
-            IClasificadorPaisService clasificadorPaisService, IClasificadorCiudadService clasificadorCiudadService,
-            IMapper mapper
-            )
+
+        public EmprendedorController(IEmprendedorService emprendedorService, IMapper mapper)
         {
-
-            _clasificadorPaisService = clasificadorPaisService;
-            _clasificadorCiudadService = clasificadorCiudadService;
-
+            _emprendedorService = emprendedorService;
             _mapper = mapper;
         }
 
-
-        [HttpGet]
-        public IActionResult GetPais()
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetEmprendedor(int id)
         {
             var response = new ApiResponse();
             try
             {
-                var result = _clasificadorPaisService.GetClasificadorPaises();
-                var resultDto = _mapper.Map<IEnumerable<ClasificadorPais>>(result);
+                var result = await _emprendedorService.GetEmprendedor(id);
+                var resultDto = _mapper.Map<EmprendedorDto>(result);
                 response.Exito = 1;
                 response.Data = resultDto;
             }
@@ -50,25 +43,23 @@ namespace Evento.Api.Controllers
             return Ok(response);
         }
 
-
-      [Route("Ciudad")]
-        public IActionResult GetCiudad(int id)
+        [HttpPut]
+        public async Task<IActionResult> PutEmprendedor(Emprendedor emprendedor)
         {
             var response = new ApiResponse();
             try
             {
-                
-                var result = _clasificadorCiudadService.GetClasificadorCiudades().Where(x=>x.IdPais==id);
-                var resultDto = _mapper.Map<IEnumerable<ClasificadorCiudad>>(result);
+                var oEmprendedor = _mapper.Map<Emprendedor>(emprendedor);
+                bool result = await _emprendedorService.PutEmprendedor(oEmprendedor);
                 response.Exito = 1;
-                response.Data = resultDto;
+                response.Data = result;
             }
             catch (Exception ex)
             {
                 response.Mensaje = ex.Message;
             }
             return Ok(response);
+
         }
-       
     }
 }

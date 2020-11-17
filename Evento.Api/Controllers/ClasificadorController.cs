@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Evento.Api.Response;
 using Evento.Core.DTO;
-using Evento.Core.Entities;
 using Evento.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,32 +13,44 @@ namespace Evento.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaisController : ControllerBase
+    public class ClasificadorController : ControllerBase
     {
-        private readonly IClasificadorPaisService _clasificadorPaisService;
-        private readonly IClasificadorCiudadService _clasificadorCiudadService;
+        private readonly IDetalleClasificadorService _detalleClasificadorService;
         private readonly IMapper _mapper;
-        public PaisController(
-            IClasificadorPaisService clasificadorPaisService, IClasificadorCiudadService clasificadorCiudadService,
-            IMapper mapper
-            )
+        public ClasificadorController(IDetalleClasificadorService detalleClasificadorService, IMapper mapper)
         {
-
-            _clasificadorPaisService = clasificadorPaisService;
-            _clasificadorCiudadService = clasificadorCiudadService;
-
+            _detalleClasificadorService = detalleClasificadorService;
             _mapper = mapper;
         }
 
+        [HttpGet]
+        [Route("Documento")]
+        public IActionResult GetDocumento()
+        {
+            var response = new ApiResponse();
+            try
+            {
+                var result = _detalleClasificadorService.GetDetalleClasificadores().Where(x=>x.IdClasificador==1);
+                var resultDto = _mapper.Map<IEnumerable<DetalleClasificadorDto>>(result);
+                response.Exito = 1;
+                response.Data = resultDto;
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
 
         [HttpGet]
-        public IActionResult GetPais()
+        [Route("Genero")]
+        public IActionResult GetGenero()
         {
             var response = new ApiResponse();
             try
             {
-                var result = _clasificadorPaisService.GetClasificadorPaises();
-                var resultDto = _mapper.Map<IEnumerable<ClasificadorPais>>(result);
+                var result = _detalleClasificadorService.GetDetalleClasificadores().Where(x => x.IdClasificador == 2);
+                var resultDto = _mapper.Map<IEnumerable<DetalleClasificadorDto>>(result);
                 response.Exito = 1;
                 response.Data = resultDto;
             }
@@ -49,26 +60,5 @@ namespace Evento.Api.Controllers
             }
             return Ok(response);
         }
-
-
-      [Route("Ciudad")]
-        public IActionResult GetCiudad(int id)
-        {
-            var response = new ApiResponse();
-            try
-            {
-                
-                var result = _clasificadorCiudadService.GetClasificadorCiudades().Where(x=>x.IdPais==id);
-                var resultDto = _mapper.Map<IEnumerable<ClasificadorCiudad>>(result);
-                response.Exito = 1;
-                response.Data = resultDto;
-            }
-            catch (Exception ex)
-            {
-                response.Mensaje = ex.Message;
-            }
-            return Ok(response);
-        }
-       
     }
 }
