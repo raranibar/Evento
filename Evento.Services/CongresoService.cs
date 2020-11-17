@@ -30,9 +30,10 @@ namespace Evento.Services
             throw new NotImplementedException();
         }
 
-        public Task<bool> PutCongreso(Congreso o)
+        public async Task<bool> PutCongreso(Congreso o)
         {
-            throw new NotImplementedException();
+            this._unitOfWork.CongresoRepository.Update(o);
+            return true;
         }
         public Task<bool> DeleteCongreso(int id)
         {

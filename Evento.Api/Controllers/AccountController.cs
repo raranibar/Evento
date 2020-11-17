@@ -22,24 +22,14 @@ namespace Evento.Api.Controllers
         private readonly IUsuarioService _usuarioService;
         private readonly ICongresoUsuarioService _congresoUsuarioService;
         private readonly IUsuarioRolService _usuarioRolService;
-
-        private readonly IEmprendedorService _emprendedorService;
-
-
-
         private readonly IMapper _mapper;
 
-        public AccountController(IPersonaService personaService, IUsuarioService usuarioService,
-            ICongresoUsuarioService congresoUsuarioService, IUsuarioRolService usuarioRolService,
-            IEmprendedorService emprendedorService,
-            IMapper mapper)
+        public AccountController(IPersonaService personaService, IUsuarioService usuarioService, ICongresoUsuarioService congresoUsuarioService, IUsuarioRolService usuarioRolService, IMapper mapper)
         {
             _personaService = personaService;
             _usuarioService = usuarioService;
             _congresoUsuarioService = congresoUsuarioService;
             _usuarioRolService = usuarioRolService;
-            _emprendedorService = emprendedorService;
-
             _mapper = mapper;
         }
 
@@ -48,32 +38,38 @@ namespace Evento.Api.Controllers
         [Route("Register")]
         public async Task<ActionResult> PostRegister(PersonaUsuarioDto personaUsuarioDto)
         {
-            var response = new ApiResponse();
+            var response = new ApiResponse();            
             var personaDocNum = _personaService.GetPersonas().Where(
-                q => q.Estado == true &&
+                q => q.Estado == true && 
                 q.NumDocumento == personaUsuarioDto.NumDocumento &&
                 q.IdTipoDocumento == personaUsuarioDto.IdTipoDocumento
             ).FirstOrDefault();
             var usuario = _usuarioService.GetUsuarios().Where(
-                q => q.Estado == true && q.Email == personaUsuarioDto.Email
+                q=> q.Estado == true && q.Email == personaUsuarioDto.Email
                 ).FirstOrDefault();
-            if (personaDocNum != null)
-            {
-                response.Mensaje = "El tipo de documento y el número ya estan Registrados.";
-                response.Data = false;
-            }
-            else if (usuario != null)
-            {
-                response.Mensaje += " El email ya esta registrado.";
+            if (!RegexUtilities.IsValidEmail(usuario.Email)) {
+                response.Mensaje = "El formato del correo electrónico no es el correcto.";
                 response.Data = false;
             }
             else
             {
-                response.Mensaje = "Usuario agregado correctamente";
-                response.Exito = 1;
-                response = await RegistroUsuario(personaUsuarioDto, response);
-            }
-            return Ok(response);
+                if (personaDocNum != null)
+                {
+                    response.Mensaje = "El tipo de documento y el número ya estan Registrados.";
+                    response.Data = false;
+                }
+                else if (usuario != null)
+                {
+                    response.Mensaje += " El email ya esta registrado.";
+                    response.Data = false;
+                }
+                else
+                {
+                    response.Exito = 1;
+                    response = await RegistroUsuario(personaUsuarioDto, response);
+                }
+            }                                               
+            return Ok(response);            
         }
 
         [HttpPost]
@@ -104,13 +100,13 @@ namespace Evento.Api.Controllers
                     response.Mensaje = "Usuario No registrados";
                     response.Data = false;
                 }
-
+                                    
             }
             catch (Exception ex)
             {
                 response.Mensaje = ex.Message;
             }
-            return Ok(response);
+            return Ok(response);            
         }
 
         private async Task<ApiResponse> RegistroUsuario(PersonaUsuarioDto personaUsuarioDto, ApiResponse response)
@@ -135,33 +131,17 @@ namespace Evento.Api.Controllers
                     oUsuarioRol.IdUsuario = oUsuario.Id;
                     await _usuarioRolService.PostUsuarioRol(oUsuarioRol);
 
-
-                    var oEmprendedor = _mapper.Map<Emprendedor>(personaUsuarioDto);
-
-                    oEmprendedor = new Emprendedor
-                    {
-                        IdPersona = oPersona.Id,
-                        Descripcion = "Escribir descripcion",
-                        Latitud = "lat",
-                        Longitud = "lng",
-                        IdCategoria = 1,
-                        NombreEmprendimiento = "Escribir nombre de emprendimiento",
-                        Ubicacion = "Escribir Ubicacion"
-                    };
-
-                    await _emprendedorService.PostEmprendedor(oEmprendedor);
-
                     response.Exito = 1;
                     response.Data = true;
                     transaction.Complete();
                 }
                 catch (TransactionException ex)
                 {
+
                     response.Mensaje = String.Format(" {0} - {1}", ex.Message, ex.InnerException);
                 }
                 return response;
             }
         }
-
     }
 }
