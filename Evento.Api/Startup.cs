@@ -1,6 +1,7 @@
 
 
 using AutoMapper;
+using Azure.Storage.Blobs;
 using Evento.Core.Interfaces;
 using Evento.Infrastructure.Data;
 using Evento.Infrastructure.Repositories;
@@ -30,11 +31,14 @@ namespace Evento.Api
             services.AddCors();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            var conex = Configuration.GetConnectionString("EventoAzure");
+            var conex = Configuration.GetConnectionString("EventoDB");
+            var blobs = Configuration.GetConnectionString("EventoStorage");
             services.AddControllers();
+            services.AddSingleton(x => new BlobServiceClient(blobs));
+            services.AddSingleton<IBlobService, BlobService>();
             services.AddDbContext<EventoDevContext>(options =>
                 options.UseSqlServer(conex));
-
+        
             services.AddTransient<ICategoriaService, CategoriaService>();
             services.AddTransient<IClasificadorService, ClasificadorService>();
             services.AddTransient<IClasificadorPaisService, ClasificadorPaisService>();
@@ -49,6 +53,7 @@ namespace Evento.Api
             services.AddTransient<IExpositorService, ExpositorService>();
             services.AddTransient<IFechaService, FechaService>();
             services.AddTransient<IFotoService, FotoService>();
+            services.AddTransient<IFotoExpService, FotoExpService>();
             services.AddTransient<IHorarioService, HorarioService>();
             services.AddTransient<IPaginaInformacionService, PaginaInformacionService>();
             services.AddTransient<IPaginaMemoriaService, PaginaMemoriaService>();
@@ -58,8 +63,10 @@ namespace Evento.Api
             services.AddTransient<IRolService, RolService>();
             services.AddTransient<IUsuarioService, UsuarioService>();
             services.AddTransient<IUsuarioRolService, UsuarioRolService>();
+            services.AddTransient<IVideoService, VideoService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

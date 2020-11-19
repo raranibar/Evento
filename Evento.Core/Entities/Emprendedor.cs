@@ -23,6 +23,8 @@ namespace Evento.Core.Entities
         public virtual Categoria IdCategoriaNavigation { get; set; }
         public virtual Persona IdPersonaNavigation { get; set; }
         public virtual ICollection<Comentario> Comentario { get; set; }
+        public virtual ICollection<Foto> Foto { get; set; }
+        public virtual ICollection<Video> Video { get; set; }
         public virtual ICollection<EmprendedorRedSocial> EmprendedorRedSocial { get; set; }
     }
 }

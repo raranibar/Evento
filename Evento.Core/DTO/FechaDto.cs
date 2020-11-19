@@ -8,7 +8,6 @@ namespace Evento.Core.DTO
     {
         public int Id { get; set; }
         public DateTime Fecha1 { get; set; }
-        public DateTime FechaRegistro { get; set; }
         public int IdCongreso { get; set; }
         public bool Estado { get; set; }
     }

@@ -10,7 +10,6 @@ namespace Evento.Core.DTO
         public string Email { get; set; }
         public string Clave { get; set; }
         public string ClaveSalt { get; set; }
-        public DateTime FechaRegistro { get; set; }
         public int IdPersona { get; set; }
         public int IdCongreso { get; set; }
         public bool Estado { get; set; }

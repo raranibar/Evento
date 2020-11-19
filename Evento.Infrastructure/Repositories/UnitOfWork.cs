@@ -24,6 +24,7 @@ namespace Evento.Infrastructure.Repositories
         private readonly IRepository<Expositor> _expositorRepository;
         private readonly IRepository<Fecha> _fechaRepository;
         private readonly IRepository<Foto> _fotoRepository;
+        private readonly IRepository<FotoExp> _fotoExpRepository;
         private readonly IRepository<Horario> _horarioRepository;
         private readonly IRepository<PaginaInformacion> _paginaInformacionRepository;
         private readonly IRepository<PaginaMemoria> _paginaMemoriaRepository;
@@ -33,6 +34,7 @@ namespace Evento.Infrastructure.Repositories
         private readonly IRepository<Rol> _rolRepository;
         private readonly IRepository<Usuario> _usuarioRepository;
         private readonly IRepository<UsuarioRol> _usuarioRolRepository;
+        private readonly IRepository<Video> _videoRepository;
 
         private readonly EventoDevContext _context;
 
@@ -55,6 +57,7 @@ namespace Evento.Infrastructure.Repositories
         public IRepository<Expositor> ExpositorRepository => _expositorRepository ?? new BaseRepository<Expositor>(_context);
         public IRepository<Fecha> FechaRepository => _fechaRepository ?? new BaseRepository<Fecha>(_context);
         public IRepository<Foto> FotoRepository => _fotoRepository ?? new BaseRepository<Foto>(_context);
+        public IRepository<FotoExp> FotoExpRepository => _fotoExpRepository ?? new BaseRepository<FotoExp>(_context);
         public IRepository<Horario> HorarioRepository => _horarioRepository ?? new BaseRepository<Horario>(_context);
         public IRepository<PaginaInformacion> PaginaInformacionRepository => _paginaInformacionRepository ?? new BaseRepository<PaginaInformacion>(_context);
         public IRepository<PaginaMemoria> PaginaMemoriaRepository => _paginaMemoriaRepository ?? new BaseRepository<PaginaMemoria>(_context);
@@ -64,7 +67,7 @@ namespace Evento.Infrastructure.Repositories
         public IRepository<Rol> RolRepository => _rolRepository ?? new BaseRepository<Rol>(_context);
         public IRepository<Usuario> UsuarioRepository => _usuarioRepository ?? new BaseRepository<Usuario>(_context);
         public IRepository<UsuarioRol> UsuarioRolRepository => _usuarioRolRepository ?? new BaseRepository<UsuarioRol>(_context);
-
+        public IRepository<Video> VideoRepository => _videoRepository ?? new BaseRepository<Video>(_context);
         public void Dispose()
         {
             if (_context != null)

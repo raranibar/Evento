@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Evento.Core.DTO
+namespace Evento.Core.Entities
 {
-    public class FotoDto
+    public partial class Video : BaseEntity
     {
-        public int Id { get; set; }
         public string Nombre { get; set; }
         public int IdEmprendedor { get; set; }
-        public bool Estado { get; set; }
+
+        public virtual Emprendedor IdEmprendedorNavigation { get; set; }
     }
 }

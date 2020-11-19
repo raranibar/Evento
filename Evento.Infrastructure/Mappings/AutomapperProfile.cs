@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Evento.Core.DTO;
 using Evento.Core.Entities;
+using Evento.Core.Entities.Blob;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -81,10 +82,16 @@ namespace Evento.Infrastructure.Mappings
             CreateMap<Usuario, PersonaUsuarioDto>();
             CreateMap<PersonaUsuarioDto, Usuario>();
 
+            CreateMap<UploadFileRequest, UploadFileDto>();
+            CreateMap<UploadFileDto, UploadFileRequest>();
+
             CreateMap<UsuarioRol, UsuarioRolDto>();
             CreateMap<UsuarioRolDto, UsuarioRol>();
             CreateMap<UsuarioRol, PersonaUsuarioDto>();
             CreateMap<PersonaUsuarioDto, UsuarioRol>();
+
+            CreateMap<Video, VideoDto>();
+            CreateMap<VideoDto, Video>();
         }            
     }
 }

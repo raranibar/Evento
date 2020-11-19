@@ -17,7 +17,6 @@ namespace Evento.Core.DTO
         public string Direccion { get; set; }
         public string NumDocumento { get; set; }
         public int IdTipoDocumento { get; set; }
-        public DateTime FechaRegistro { get; set; }
         public bool Estado { get; set; }
     }
 }
