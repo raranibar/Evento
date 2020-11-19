@@ -31,7 +31,7 @@ namespace Evento.Api
             services.AddCors();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            var conex = Configuration.GetConnectionString("EventoDB");
+            var conex = Configuration.GetConnectionString("EventoAzure");
             var blobs = Configuration.GetConnectionString("EventoStorage");
             services.AddControllers();
             services.AddSingleton(x => new BlobServiceClient(blobs));

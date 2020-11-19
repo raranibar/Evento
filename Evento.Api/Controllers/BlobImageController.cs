@@ -92,6 +92,7 @@ namespace Evento.Api.Controllers
                 await _blobService.UploadFileBlobAsync(request.FilePath, request.FileName, container);
                 response.Exito = 1;
                 response.Data = "Foto Expositor Cargada en el repositorio";
+
             }
             catch (Exception ex)
             {
