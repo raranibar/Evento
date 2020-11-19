@@ -6,6 +6,10 @@ namespace Evento.Core.DTO
 {
     public class PersonaUsuarioDto
     {
+        public int IdPersona { get; set; }
+        public int IdUsuario { get; set; }
+
+
         public string Nombres { get; set; }
         public string Paterno { get; set; }
         public string Materno { get; set; }

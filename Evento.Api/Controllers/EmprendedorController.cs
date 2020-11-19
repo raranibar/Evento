@@ -25,6 +25,42 @@ namespace Evento.Api.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet]
+        [Route("todo")]
+        public IActionResult GetEmprendedores(int id)
+        {
+            var response = new ApiResponse();
+            try
+            {
+                var result = _emprendedorService.GetEmprendedores().Where( x=>x.IdCategoria==id);
+                var resultDto = _mapper.Map<IEnumerable<EmprendedorDto>>(result);
+                response.Exito = 1;
+                response.Data = resultDto;
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+        [HttpGet]
+        public IActionResult GetEmprendedores()
+        {
+            var response = new ApiResponse();
+            try
+            {
+                var result = _emprendedorService.GetEmprendedores();
+                var resultDto = _mapper.Map<IEnumerable<EmprendedorDto>>(result);
+                response.Exito = 1;
+                response.Data = resultDto;
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetEmprendedor(int id)
         {

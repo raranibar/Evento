@@ -68,11 +68,11 @@ namespace Evento.Api.Controllers
             try
             {
                 var oCongreso = _mapper.Map<Congreso>(CongresoDto);
-                await _congresoService.PostCongreso(oCongreso);
-                CongresoDto = _mapper.Map<CongresoDto>(oCongreso);
+                 await _congresoService.PostCongreso(oCongreso);
+                //CongresoDto = _mapper.Map<CongresoDto>(oCongreso);
 
                 response.Exito = 1;
-                response.Data = CongresoDto;                
+             //   response.Data = result;                
             }catch (Exception ex)
             {
                 response.Mensaje = ex.Message;

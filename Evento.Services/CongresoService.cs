@@ -25,14 +25,16 @@ namespace Evento.Services
             return this._unitOfWork.CongresoRepository.GetAll().Where(q => q.Estado == true);
         }
 
-        public Task PostCongreso(Congreso o)
+        public  async Task PostCongreso(Congreso o)
         {
-            throw new NotImplementedException();
+            await this._unitOfWork.CongresoRepository.Add(o);
+            await this._unitOfWork.SaveChangesAsync();
         }
 
         public async Task<bool> PutCongreso(Congreso o)
         {
             this._unitOfWork.CongresoRepository.Update(o);
+            await this._unitOfWork.SaveChangesAsync();
             return true;
         }
         public Task<bool> DeleteCongreso(int id)

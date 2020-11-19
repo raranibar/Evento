@@ -13,6 +13,6 @@ namespace Evento.Core.DTO
         public string Responsable { get; set; }
         public string Logo { get; set; }
         public bool Estado { get; set; }
-        public DateTime FechaRegistro { get; set; }
+        //public DateTime FechaRegistro { get; set; }
     }
 }
