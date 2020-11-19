@@ -3,6 +3,7 @@ using Evento.Core.DTO;
 using Evento.Core.Entities;
 using Evento.Core.Entities.Blob;
 using Evento.Core.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -106,6 +107,22 @@ namespace Evento.Api.Controllers
             string container = this._configuration.GetValue<string>("EventoSettings:ContainerImg");
             await _blobService.UploadContentBlobAsync(request.Content, request.FileName,container);
             return Ok();
+        }
+
+        [HttpPost("uploadpicture"), DisableRequestSizeLimit]
+        public async Task<ActionResult> UploadProfilePicture()
+        {
+            string container = this._configuration.GetValue<string>("EventoSettings:ContainerImg");
+            IFormFile file = Request.Form.Files[0];
+            if (file == null)
+            {
+                return BadRequest();
+            }
+
+            var result = await _blobService.UploadFileBlobAsync(file.OpenReadStream(), file.ContentType, file.FileName, container);
+            var toReturn = result.AbsoluteUri;
+
+            return Ok(new { path = toReturn });
         }
 
         [HttpDelete("{blobName}")]
