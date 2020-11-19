@@ -1,5 +1,7 @@
 ﻿using Evento.Core.Entities.Blob;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Evento.Core.Interfaces
@@ -15,6 +17,7 @@ namespace Evento.Core.Interfaces
         Task UploadContentBlobAsync(string content, string fileName, string container);
 
         Task DeleteBlobAsync(string blobName, string container);
+        Task<Uri> UploadFileBlobAsync(Stream content, string contentType, string fileName, string container);
 
     }
 }

@@ -62,5 +62,14 @@ namespace Evento.Services
             var blobClient = containerClient.GetBlobClient(blobName);
             await blobClient.DeleteIfExistsAsync();
         }
+
+        public async Task<Uri> UploadFileBlobAsync(Stream content, string contentType, string fileName, string container)
+        {
+
+            var containerClient = _blobServiceClient.GetBlobContainerClient(container);
+            var blobClient = containerClient.GetBlobClient(fileName);
+            await blobClient.UploadAsync(content, new BlobHttpHeaders { ContentType = contentType });
+            return blobClient.Uri;
+        }
     }
 }
