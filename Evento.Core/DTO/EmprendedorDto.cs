@@ -15,7 +15,6 @@ namespace Evento.Core.DTO
         public int Raiting { get; set; }
         public int IdPersona { get; set; }
         public int IdCategoria { get; set; }
-        public DateTime FechaRegistro { get; set; }
         public bool Estado { get; set; }
     }
 }

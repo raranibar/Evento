@@ -4,11 +4,10 @@ using System.Text;
 
 namespace Evento.Core.DTO
 {
-    public class FotoDto
+    public class FotoUploadFileDto
     {
-        public int Id { get; set; }
-        public string Nombre { get; set; }
         public int IdEmprendedor { get; set; }
-        public bool Estado { get; set; }
+        public string FilePath { get; set; }
+        public string FileName { get; set; }
     }
 }

@@ -20,6 +20,7 @@ namespace Evento.Core.Interfaces
         IRepository<Expositor> ExpositorRepository { get; }
         IRepository<Fecha> FechaRepository { get; }
         IRepository<Foto> FotoRepository { get; }
+        IRepository<FotoExp> FotoExpRepository { get; }
         IRepository<Horario> HorarioRepository { get; }
         IRepository<PaginaInformacion> PaginaInformacionRepository { get; }
         IRepository<PaginaMemoria> PaginaMemoriaRepository { get; }
@@ -29,7 +30,8 @@ namespace Evento.Core.Interfaces
         IRepository<Rol> RolRepository { get; }
         IRepository<Usuario> UsuarioRepository { get; }
         IRepository<UsuarioRol> UsuarioRolRepository { get; }
-        
+        IRepository<Video> VideoRepository { get; }
+
         void SaveChanges();
         Task SaveChangesAsync();
     }

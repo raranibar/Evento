@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using AutoMapper;
 using Evento.Api.Response;
 using Evento.Core.DTO;
@@ -62,21 +63,27 @@ namespace Evento.Api.Controllers
    
 
         [HttpPost]
-        public async Task<IActionResult> PostCongreso(CongresoDto CongresoDto)
+        public async Task<IActionResult> PostCongreso(CongresoDto congresoDto)
         {
             var response = new ApiResponse();
-            try
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                var oCongreso = _mapper.Map<Congreso>(CongresoDto);
-                await _congresoService.PostCongreso(oCongreso);
-                CongresoDto = _mapper.Map<CongresoDto>(oCongreso);
+                try
+                {
+                    var oCongreso = _mapper.Map<Congreso>(congresoDto);
+                    await _congresoService.PostCongreso(oCongreso);
+                    congresoDto = _mapper.Map<CongresoDto>(oCongreso);
 
-                response.Exito = 1;
-                response.Data = CongresoDto;                
-            }catch (Exception ex)
-            {
-                response.Mensaje = ex.Message;
+                    response.Exito = 1;
+                    response.Data = congresoDto;
+                    transaction.Complete();
+                }
+                catch (Exception ex)
+                {
+                    response.Mensaje = ex.Message;
+                }
             }
+            
             return Ok(response);
         }
 
@@ -84,17 +91,20 @@ namespace Evento.Api.Controllers
         public async Task<IActionResult> PutCongreso(CongresoDto CongresoDto, int id)
         {
             var response = new ApiResponse();
-            try
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                var oCongreso = _mapper.Map<Congreso>(CongresoDto);
-                bool result = await _congresoService.PutCongreso(oCongreso);
-                response.Exito = 1;
-                response.Data = result;
-            }
-            catch (Exception ex)
-            {
-                response.Mensaje = ex.Message;
-            }
+                try
+                {
+                    var oCongreso = _mapper.Map<Congreso>(CongresoDto);
+                    bool result = await _congresoService.PutCongreso(oCongreso);
+                    response.Exito = 1;
+                    response.Data = result;
+                }
+                catch (Exception ex)
+                {
+                    response.Mensaje = ex.Message;
+                }
+            }                
             return Ok(response);            
 
         }
@@ -103,16 +113,19 @@ namespace Evento.Api.Controllers
         public async Task<IActionResult> DeleteCongreso(int id)
         {
             var response = new ApiResponse();
-            try
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                bool result = await this._congresoService.DeleteCongreso(id);
-                response.Exito = 1;
-                response.Data =result;
-            }
-            catch (Exception ex)
-            {
-                response.Mensaje = ex.Message;
-            }
+                try
+                {
+                    bool result = await this._congresoService.DeleteCongreso(id);
+                    response.Exito = 1;
+                    response.Data = result;
+                }
+                catch (Exception ex)
+                {
+                    response.Mensaje = ex.Message;
+                }
+            }            
             return Ok(response);            
         }
     }

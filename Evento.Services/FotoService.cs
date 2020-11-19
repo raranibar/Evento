@@ -1,8 +1,7 @@
 ﻿using Evento.Core.Entities;
 using Evento.Core.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Evento.Services
@@ -15,28 +14,32 @@ namespace Evento.Services
             this._unitOfWork = unitOfWork;
         }
 
-        public Task<Foto> GetFoto(int id)
+        public async Task<Foto> GetFoto(int id)
         {
-            throw new NotImplementedException();
+            return await this._unitOfWork.FotoRepository.GetById(id);
         }
 
         public IEnumerable<Foto> GetFotos()
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.FotoRepository.GetAll().Where(q => q.Estado == true);
         }
 
-        public Task PostFoto(Foto o)
+        public async Task PostFoto(Foto o)
         {
-            throw new NotImplementedException();
+            await this._unitOfWork.FotoRepository.Add(o);
+            await this._unitOfWork.SaveChangesAsync();
         }
 
-        public Task<bool> PutFoto(Foto o)
+        public async Task<bool> PutFoto(Foto o)
         {
-            throw new NotImplementedException();
+            this._unitOfWork.FotoRepository.Update(o);
+            await this._unitOfWork.SaveChangesAsync();
+            return true;
         }
-        public Task<bool> DeleteFoto(int id)
+        public async Task<bool> DeleteFoto(int id)
         {
-            throw new NotImplementedException();
+            await this._unitOfWork.FotoRepository.Delete(id);
+            return true;
         }
     }
 }

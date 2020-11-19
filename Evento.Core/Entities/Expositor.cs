@@ -18,5 +18,6 @@ namespace Evento.Core.Entities
         public virtual EjeTematico IdEjeTematicoNavigation { get; set; }
         public virtual Persona IdPersonaNavigation { get; set; }
         public virtual ICollection<Horario> Horario { get; set; }
+        public virtual ICollection<FotoExp> FotoExp { get; set; }
     }
 }

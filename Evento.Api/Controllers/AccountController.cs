@@ -38,38 +38,38 @@ namespace Evento.Api.Controllers
         [Route("Register")]
         public async Task<ActionResult> PostRegister(PersonaUsuarioDto personaUsuarioDto)
         {
-            var response = new ApiResponse();            
+            var response = new ApiResponse();
             var personaDocNum = _personaService.GetPersonas().Where(
-                q => q.Estado == true && 
+                q => q.Estado == true &&
                 q.NumDocumento == personaUsuarioDto.NumDocumento &&
                 q.IdTipoDocumento == personaUsuarioDto.IdTipoDocumento
             ).FirstOrDefault();
             var usuario = _usuarioService.GetUsuarios().Where(
-                q=> q.Estado == true && q.Email == personaUsuarioDto.Email
+                q => q.Estado == true && q.Email == personaUsuarioDto.Email
                 ).FirstOrDefault();
-            if (!RegexUtilities.IsValidEmail(usuario.Email)) {
+
+            if (personaDocNum != null)
+            {
+                response.Mensaje = "El tipo de documento y el número ya estan Registrados.";
+                response.Data = false;
+            }
+            else if (usuario != null)
+            {
+                response.Mensaje += " El email ya esta registrado.";
+                response.Data = false;
+            }
+            else if (!RegexUtilities.IsValidEmail(personaUsuarioDto.Email))
+            {
                 response.Mensaje = "El formato del correo electrónico no es el correcto.";
                 response.Data = false;
             }
             else
             {
-                if (personaDocNum != null)
-                {
-                    response.Mensaje = "El tipo de documento y el número ya estan Registrados.";
-                    response.Data = false;
-                }
-                else if (usuario != null)
-                {
-                    response.Mensaje += " El email ya esta registrado.";
-                    response.Data = false;
-                }
-                else
-                {
-                    response.Exito = 1;
-                    response = await RegistroUsuario(personaUsuarioDto, response);
-                }
-            }                                               
-            return Ok(response);            
+                response.Exito = 1;
+                response = await RegistroUsuario(personaUsuarioDto, response);
+            }
+
+            return Ok(response);
         }
 
         [HttpPost]
@@ -100,13 +100,13 @@ namespace Evento.Api.Controllers
                     response.Mensaje = "Usuario No registrados";
                     response.Data = false;
                 }
-                                    
+
             }
             catch (Exception ex)
             {
                 response.Mensaje = ex.Message;
             }
-            return Ok(response);            
+            return Ok(response);
         }
 
         private async Task<ApiResponse> RegistroUsuario(PersonaUsuarioDto personaUsuarioDto, ApiResponse response)

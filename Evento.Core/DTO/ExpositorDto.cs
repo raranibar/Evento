@@ -10,7 +10,6 @@ namespace Evento.Core.DTO
         public string NombreExposicion { get; set; }
         public string Institucion { get; set; }
         public string ResumenCv { get; set; }
-        public DateTime FechaRegistro { get; set; }
         public int IdEjeTematico { get; set; }
         public int IdPersona { get; set; }
         public bool Estado { get; set; }

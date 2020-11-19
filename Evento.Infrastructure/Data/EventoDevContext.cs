@@ -37,7 +37,7 @@ namespace Evento.Infrastructure.Data
         public virtual DbSet<Rol> Rol { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
         public virtual DbSet<UsuarioRol> UsuarioRol { get; set; }
-
+        public virtual DbSet<Video> Video { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Categoria>(entity =>
@@ -281,22 +281,33 @@ namespace Evento.Infrastructure.Data
             });
 
             modelBuilder.Entity<Foto>(entity =>
-            {
-                entity.HasNoKey();
+            {                              
+                entity.Property(e => e.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(500);
 
                 entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
 
-                entity.Property(e => e.Id).ValueGeneratedOnAdd();
-
-                entity.Property(e => e.Nombre)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
                 entity.HasOne(d => d.IdEmprendedorNavigation)
-                    .WithMany()
+                    .WithMany(p => p.Foto)
                     .HasForeignKey(d => d.IdEmprendedor)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Foto_Emprendedor");
+            });
+
+            modelBuilder.Entity<FotoExp>(entity =>
+            {
+                entity.Property(e => e.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
+                entity.HasOne(d => d.IdExpositorNavigation)
+                    .WithMany(p => p.FotoExp)
+                    .HasForeignKey(d => d.IdExpositor)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_FotoExp_Expositor");
             });
 
             modelBuilder.Entity<Horario>(entity =>
@@ -489,6 +500,21 @@ namespace Evento.Infrastructure.Data
                     .HasForeignKey(d => d.IdUsuario)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UsuarioRol_Usuario");
+            });
+
+            modelBuilder.Entity<Video>(entity =>
+            {
+                entity.Property(e => e.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
+                entity.HasOne(d => d.IdEmprendedorNavigation)
+                    .WithMany(p => p.Video)
+                    .HasForeignKey(d => d.IdEmprendedor)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Video_Emprendedor");
             });
         }
     }
