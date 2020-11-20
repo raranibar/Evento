@@ -2,6 +2,7 @@
 using Evento.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,12 +18,12 @@ namespace Evento.Services
 
         public Task<UsuarioRol> GetUsuarioRol(int id)
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.UsuarioRolRepository.GetById(id);
         }
 
         public IEnumerable<UsuarioRol> GetUsuarioRoles()
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.UsuarioRolRepository.GetAll().Where(q=> q.Estado == true);
         }
 
         public async Task PostUsuarioRol(UsuarioRol o)

@@ -1,4 +1,5 @@
-﻿using Evento.Core.Entities;
+﻿using Evento.Core.DTO;
+using Evento.Core.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

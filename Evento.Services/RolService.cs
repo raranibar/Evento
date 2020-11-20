@@ -17,7 +17,7 @@ namespace Evento.Services
         }
         public Task<Rol> GetRol(int id)
         {
-            throw new NotImplementedException();
+            return _unitOfWork.RolRepository.GetById(id);
         }
 
         public IEnumerable<Rol> GetRoles()

@@ -179,9 +179,7 @@ namespace Evento.Infrastructure.Data
 
             modelBuilder.Entity<Emprendedor>(entity =>
             {
-                entity.Property(e => e.Descripcion)
-                    .IsRequired()
-                    .HasMaxLength(1000);
+                entity.Property(e => e.Descripcion).IsRequired();
 
                 entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
 
@@ -249,8 +247,7 @@ namespace Evento.Infrastructure.Data
 
                 entity.Property(e => e.ResumenCv)
                     .IsRequired()
-                    .HasColumnName("ResumenCV")
-                    .HasMaxLength(500);
+                    .HasColumnName("ResumenCV");
 
                 entity.HasOne(d => d.IdEjeTematicoNavigation)
                     .WithMany(p => p.Expositor)
