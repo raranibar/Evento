@@ -62,6 +62,7 @@ namespace Evento.Api
             services.AddTransient<IPaginaMemoriaService, PaginaMemoriaService>();
             services.AddTransient<IParticipanteService, ParticipanteService>();
             services.AddTransient<IPersonaService, PersonaService>();
+            services.AddTransient<IRaitingService, RaitingService>();
             services.AddTransient<IRedSocialService, RedSocialService>();
             services.AddTransient<IRolService, RolService>();
             services.AddTransient<IUsuarioService, UsuarioService>();

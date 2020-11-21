@@ -33,6 +33,7 @@ namespace Evento.Infrastructure.Data
         public virtual DbSet<PaginaMemoria> PaginaMemoria { get; set; }
         public virtual DbSet<Participante> Participante { get; set; }
         public virtual DbSet<Persona> Persona { get; set; }
+        public virtual DbSet<Raiting> Raiting { get; set; }
         public virtual DbSet<RedSocial> RedSocial { get; set; }
         public virtual DbSet<Rol> Rol { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
@@ -435,6 +436,17 @@ namespace Evento.Infrastructure.Data
                     .HasForeignKey(d => d.IdTipoDocumento)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Persona_DetalleClasificador");
+            });
+
+            modelBuilder.Entity<Raiting>(entity =>
+            {
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
+                entity.HasOne(d => d.IdEmprendedorNavigation)
+                    .WithMany(p => p.Raiting)
+                    .HasForeignKey(d => d.IdEmprendedor)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Raiting_Emprendedor");
             });
 
             modelBuilder.Entity<RedSocial>(entity =>

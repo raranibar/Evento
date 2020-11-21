@@ -116,6 +116,9 @@ namespace Evento.Api.Controllers
                         personaUsuarioDto.IdRol = oUsuRol.IdRol;
                         var token = GenerateToken(personaUsuarioDto);
                         UserResponse userResponse = new UserResponse();
+                        userResponse.IdPersona = oUsuario.IdPersona;
+                        userResponse.IdUsuario = oUsuario.Id;
+                        userResponse.IdRol = oUsuRol.IdRol;
                         userResponse.Email = oUsuario.Email;
                         userResponse.Token = token;
                         response.Exito = 1;
