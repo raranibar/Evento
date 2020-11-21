@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using AutoMapper;
 using Evento.Api.Response;
 using Evento.Core.DTO;
@@ -42,5 +43,8 @@ namespace Evento.Api.Controllers
             }
             return Ok(response);
         }
+
+
+      
     }
 }

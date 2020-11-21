@@ -18,7 +18,8 @@ namespace Evento.Services
         }
         public Task<RedSocial> GetRedSocial(int id)
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.RedSocialRepository.GetById(id);
+
         }
 
         public IEnumerable<RedSocial> GetRedSociales()

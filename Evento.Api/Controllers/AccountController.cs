@@ -23,16 +23,24 @@ namespace Evento.Api.Controllers
         private readonly ICongresoUsuarioService _congresoUsuarioService;
         private readonly IUsuarioRolService _usuarioRolService;
         private readonly IEmprendedorService _emprendedorService;
+        private readonly IRedSocialService _redSocialService;
+        private readonly IEmprendedorRedSocialService _emprendedorRedSocialService;
 
         private readonly IMapper _mapper;
 
-        public AccountController(IPersonaService personaService, IUsuarioService usuarioService, ICongresoUsuarioService congresoUsuarioService, IUsuarioRolService usuarioRolService, IEmprendedorService emprendedorService, IMapper mapper)
+        public AccountController(IPersonaService personaService, IUsuarioService usuarioService, 
+            ICongresoUsuarioService congresoUsuarioService, IUsuarioRolService usuarioRolService,
+            IEmprendedorService emprendedorService, IRedSocialService redSocialService,
+            IEmprendedorRedSocialService emprendedorRedSocialService, IMapper mapper)
         {
             _personaService = personaService;
             _usuarioService = usuarioService;
             _congresoUsuarioService = congresoUsuarioService;
             _usuarioRolService = usuarioRolService;
             _emprendedorService = emprendedorService;
+            _redSocialService = redSocialService;
+            _emprendedorRedSocialService = emprendedorRedSocialService;
+
             _mapper = mapper;
         }
 
@@ -141,8 +149,8 @@ namespace Evento.Api.Controllers
                     {
                         IdPersona = oPersona.Id,
                         Descripcion = "Escribir descripcion",
-                        Latitud = "lat",
-                        Longitud = "lng",
+                        Latitud = "-21.535132",
+                        Longitud = "-64.728431",
                         IdCategoria = 1,
                         NombreEmprendimiento = "Escribir nombre de emprendimiento",
                         Ubicacion = "Escribir Ubicacion",
@@ -150,6 +158,23 @@ namespace Evento.Api.Controllers
                     };
 
                     await _emprendedorService.PostEmprendedor(oEmprendedor);
+
+                    var result = _redSocialService.GetRedSociales();
+                    var resultDto = _mapper.Map<IEnumerable<RedSocialDto>>(result);
+
+                    foreach (var item in resultDto)
+                    {
+                        var e = new EmprendedorRedSocial
+                        {
+                            IdEmprendedor = oEmprendedor.Id,
+                            IdRedSocial = item.Id,
+                            Direccion = ""
+
+                        };
+                        var oEmprendedorRedSocial = _mapper.Map<EmprendedorRedSocial>(e);
+                        await _emprendedorRedSocialService.PostEmprendedorRedSocial(oEmprendedorRedSocial);
+                    }
+                   
 
                     response.Exito = 1;
                     response.Data = true;
@@ -208,6 +233,76 @@ namespace Evento.Api.Controllers
                 response.Mensaje = ex.Message;
             }
             return Ok(response);
+        }
+
+
+
+        private async Task<ApiResponse> ActualizarUsuario(PersonaUsuarioDto personaUsuarioDto, ApiResponse response)
+        {
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+                    var oPersona = _mapper.Map<Persona>(personaUsuarioDto);
+                    await _personaService.PutPersona(oPersona);
+
+                    var oUsuario = _mapper.Map<Usuario>(personaUsuarioDto);
+                    oUsuario.IdPersona = oPersona.Id;
+                    await _usuarioService.PutUsuario(oUsuario);
+
+                    var oCongresoUsuario = _mapper.Map<CongresoUsuario>(personaUsuarioDto);
+                    oCongresoUsuario.IdCongreso = oUsuario.IdCongreso;
+                    oCongresoUsuario.IdUsuario = oUsuario.Id;
+                    await _congresoUsuarioService.PostCongresoUsuario(oCongresoUsuario);
+
+                    var oUsuarioRol = _mapper.Map<UsuarioRol>(personaUsuarioDto);
+                    oUsuarioRol.IdUsuario = oUsuario.Id;
+                    await _usuarioRolService.PostUsuarioRol(oUsuarioRol);
+
+                    var oEmprendedor = _mapper.Map<Emprendedor>(personaUsuarioDto);
+
+                    oEmprendedor = new Emprendedor
+                    {
+                        IdPersona = oPersona.Id,
+                        Descripcion = "Escribir descripcion",
+                        Latitud = "-21.535132",
+                        Longitud = "-64.728431",
+                        IdCategoria = 1,
+                        NombreEmprendimiento = "Escribir nombre de emprendimiento",
+                        Ubicacion = "Escribir Ubicacion",
+                        //Estado = false
+                    };
+
+                    await _emprendedorService.PostEmprendedor(oEmprendedor);
+
+                    var result = _redSocialService.GetRedSociales();
+                    var resultDto = _mapper.Map<IEnumerable<RedSocialDto>>(result);
+
+                    foreach (var item in resultDto)
+                    {
+                        var e = new EmprendedorRedSocial
+                        {
+                            IdEmprendedor = oEmprendedor.Id,
+                            IdRedSocial = item.Id,
+                            Direccion = ""
+
+                        };
+                        var oEmprendedorRedSocial = _mapper.Map<EmprendedorRedSocial>(e);
+                        await _emprendedorRedSocialService.PostEmprendedorRedSocial(oEmprendedorRedSocial);
+                    }
+
+
+                    response.Exito = 1;
+                    response.Data = true;
+                    transaction.Complete();
+                }
+                catch (TransactionException ex)
+                {
+
+                    response.Mensaje = String.Format(" {0} - {1}", ex.Message, ex.InnerException);
+                }
+                return response;
+            }
         }
     }
 }

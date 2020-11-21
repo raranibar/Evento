@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,8 +7,7 @@ namespace Evento.Core.DTO
 {
     public class VideoUploadFileDto
     {
-        public int IdEmprendedor { get; set; }
-        public string FilePath { get; set; }
-        public string FileName { get; set; }
+        public int idEmprendedor { get; set; }
+        public IFormFile files { get; set; }
     }
 }
