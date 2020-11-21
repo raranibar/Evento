@@ -8,13 +8,16 @@ using Evento.Api.Response;
 using Evento.Core.DTO;
 using Evento.Core.Entities;
 using Evento.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Evento.Api.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CongresoController : ControllerBase
     {
         private readonly ICongresoService _congresoService;

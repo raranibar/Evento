@@ -1,4 +1,5 @@
-﻿using Evento.Core.Entities;
+﻿using Evento.Core.DTO;
+using Evento.Core.Entities;
 using Evento.Core.Helper;
 using Evento.Core.Interfaces;
 using System;
@@ -45,5 +46,6 @@ namespace Evento.Services
         {
             throw new NotImplementedException();
         }
+        
     }
 }

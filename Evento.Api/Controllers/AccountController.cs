@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 using AutoMapper;
@@ -11,6 +14,8 @@ using Evento.Core.Helper;
 using Evento.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Evento.Api.Controllers
 {
@@ -27,11 +32,14 @@ namespace Evento.Api.Controllers
         private readonly IEmprendedorRedSocialService _emprendedorRedSocialService;
 
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
-        public AccountController(IPersonaService personaService, IUsuarioService usuarioService, 
-            ICongresoUsuarioService congresoUsuarioService, IUsuarioRolService usuarioRolService,
-            IEmprendedorService emprendedorService, IRedSocialService redSocialService,
-            IEmprendedorRedSocialService emprendedorRedSocialService, IMapper mapper)
+        public AccountController(IPersonaService personaService, 
+                                 IUsuarioService usuarioService, 
+                                 ICongresoUsuarioService congresoUsuarioService, 
+                                 IUsuarioRolService usuarioRolService, 
+                                 IMapper mapper,
+                                 IConfiguration configuration)
         {
             _personaService = personaService;
             _usuarioService = usuarioService;
@@ -42,6 +50,7 @@ namespace Evento.Api.Controllers
             _emprendedorRedSocialService = emprendedorRedSocialService;
 
             _mapper = mapper;
+            _configuration = configuration;
         }
 
         // Post api/Account/Register
@@ -94,15 +103,25 @@ namespace Evento.Api.Controllers
                 var oUsuario = _usuarioService.GetUsuarios().FirstOrDefault(q => q.Email == loginDto.Login && q.Estado == true);
                 if (oUsuario != null)
                 {
+
                     if (PasswordHasher.ValidatePassword(loginDto.Password, oUsuario.Clave, oUsuario.ClaveSalt))
                     {
+                        var pPersona = _personaService.GetPersonas().FirstOrDefault(q => q.Id == oUsuario.IdPersona);
+                        var personaUsuarioDto = _mapper.Map<PersonaUsuarioDto>(pPersona);
+                        var oUsuRol = _usuarioRolService.GetUsuarioRoles().FirstOrDefault(q => q.IdUsuario == oUsuario.Id);
+                        personaUsuarioDto.Email = oUsuario.Email;
+                        personaUsuarioDto.IdRol = oUsuRol.IdRol;
+                        var token = GenerateToken(personaUsuarioDto);
+                        UserResponse userResponse = new UserResponse();
+                        userResponse.Email = oUsuario.Email;
+                        userResponse.Token = token;
                         response.Exito = 1;
-                        response.Data = true;
+                        response.Data = userResponse;
                     }
                     else
                     {
                         response.Exito = 0;
-                        response.Mensaje = "Usuario y Password Incorrectos";
+                        response.Mensaje = "Usuario o Password Incorrectos";
                         response.Data = false;
                     }
                 }
@@ -113,7 +132,7 @@ namespace Evento.Api.Controllers
                     response.Data = false;
                 }
 
-            }
+                }
             catch (Exception ex)
             {
                 response.Mensaje = ex.Message;
@@ -303,6 +322,33 @@ namespace Evento.Api.Controllers
                 }
                 return response;
             }
+        }
+
+        private string GenerateToken(PersonaUsuarioDto personaUsuario)
+        {
+            // Leemos el secret_key desde nuestro appseting
+            var secretKey = _configuration["Authentication:SecretKey"];                        
+            //Header
+            var symetricSecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+            var signingCredentials = new SigningCredentials(symetricSecurityKey, SecurityAlgorithms.HmacSha256);
+            var header = new JwtHeader(signingCredentials);
+
+            //Claims
+            var claims = new[]
+            {
+                 new Claim(ClaimTypes.Name, string.Concat(personaUsuario.Nombres," ", personaUsuario.Paterno, " ", personaUsuario.Materno)),
+                 new Claim(ClaimTypes.Email, personaUsuario.Email),
+                 new Claim(ClaimTypes.Role, personaUsuario.IdRol.ToString())
+            };
+
+            //Payload Issuer y Audience no definido
+            var payload = new JwtPayload("", "", claims, DateTime.Now, DateTime.UtcNow.AddMinutes(5)
+                );
+
+            ////generar
+            var token = new JwtSecurityToken(header, payload);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
