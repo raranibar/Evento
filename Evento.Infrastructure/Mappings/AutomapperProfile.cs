@@ -67,6 +67,9 @@ namespace Evento.Infrastructure.Mappings
             CreateMap<Persona, PersonaUsuarioDto>();
             CreateMap<PersonaUsuarioDto, Persona>();
 
+            CreateMap<Raiting, RaitingDto>();
+            CreateMap<RaitingDto, Raiting>();
+
             CreateMap<RedSocial, RedSocialDto>();
             CreateMap<RedSocialDto, RedSocial>();
 

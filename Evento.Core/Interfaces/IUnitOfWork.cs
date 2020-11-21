@@ -26,6 +26,7 @@ namespace Evento.Core.Interfaces
         IRepository<PaginaMemoria> PaginaMemoriaRepository { get; }
         IRepository<Participante> ParticipanteRepository { get; }
         IRepository<Persona> PersonaRepository { get; }
+        IRepository<Raiting> RaitingRepository { get; }
         IRepository<RedSocial> RedSocialRepository { get; }
         IRepository<Rol> RolRepository { get; }
         IRepository<Usuario> UsuarioRepository { get; }

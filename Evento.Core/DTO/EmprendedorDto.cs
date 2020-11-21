@@ -12,7 +12,6 @@ namespace Evento.Core.DTO
         public string Ubicacion { get; set; }
         public string Latitud { get; set; }
         public string Longitud { get; set; }
-        public int Raiting { get; set; }
         public int IdPersona { get; set; }
         public int IdCategoria { get; set; }
         public bool Estado { get; set; }

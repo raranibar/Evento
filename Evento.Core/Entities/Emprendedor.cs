@@ -16,7 +16,6 @@ namespace Evento.Core.Entities
         public string Ubicacion { get; set; }
         public string Latitud { get; set; }
         public string Longitud { get; set; }
-        public int Raiting { get; set; }
         public int IdPersona { get; set; }
         public int IdCategoria { get; set; }
 
@@ -24,6 +23,7 @@ namespace Evento.Core.Entities
         public virtual Persona IdPersonaNavigation { get; set; }
         public virtual ICollection<Comentario> Comentario { get; set; }
         public virtual ICollection<Foto> Foto { get; set; }
+        public virtual ICollection<Raiting> Raiting { get; set; }
         public virtual ICollection<Video> Video { get; set; }
         public virtual ICollection<EmprendedorRedSocial> EmprendedorRedSocial { get; set; }
     }

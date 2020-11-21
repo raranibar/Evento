@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Evento.Core.Entities
+﻿namespace Evento.Core.Entities
 {
     public partial class Foto : BaseEntity
     {

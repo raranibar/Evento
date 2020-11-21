@@ -30,6 +30,7 @@ namespace Evento.Infrastructure.Repositories
         private readonly IRepository<PaginaMemoria> _paginaMemoriaRepository;
         private readonly IRepository<Participante> _participanteRepository;
         private readonly IRepository<Persona> _personaRepository;
+        private readonly IRepository<Raiting> _raitingRepository;
         private readonly IRepository<RedSocial> _redSocialRepository;
         private readonly IRepository<Rol> _rolRepository;
         private readonly IRepository<Usuario> _usuarioRepository;
@@ -63,6 +64,7 @@ namespace Evento.Infrastructure.Repositories
         public IRepository<PaginaMemoria> PaginaMemoriaRepository => _paginaMemoriaRepository ?? new BaseRepository<PaginaMemoria>(_context);
         public IRepository<Participante> ParticipanteRepository => _participanteRepository ?? new BaseRepository<Participante>(_context);
         public IRepository<Persona> PersonaRepository => _personaRepository ?? new BaseRepository<Persona>(_context);
+        public IRepository<Raiting> RaitingRepository => _raitingRepository ?? new BaseRepository<Raiting>(_context);
         public IRepository<RedSocial> RedSocialRepository => _redSocialRepository ?? new BaseRepository<RedSocial>(_context);
         public IRepository<Rol> RolRepository => _rolRepository ?? new BaseRepository<Rol>(_context);
         public IRepository<Usuario> UsuarioRepository => _usuarioRepository ?? new BaseRepository<Usuario>(_context);
