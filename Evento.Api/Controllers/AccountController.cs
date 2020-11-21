@@ -37,7 +37,10 @@ namespace Evento.Api.Controllers
         public AccountController(IPersonaService personaService, 
                                  IUsuarioService usuarioService, 
                                  ICongresoUsuarioService congresoUsuarioService, 
-                                 IUsuarioRolService usuarioRolService, 
+                                 IUsuarioRolService usuarioRolService,
+                                 IRedSocialService redSocialService,
+                                 IEmprendedorService emprendedorService,
+                                 IEmprendedorRedSocialService emprendedorRedSocialService,
                                  IMapper mapper,
                                  IConfiguration configuration)
         {
