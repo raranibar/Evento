@@ -56,7 +56,6 @@ namespace Evento.Api.Controllers
             _configuration = configuration;
         }
 
-        // Post api/Account/Register
         [HttpPost]
         [Route("Register")]
         public async Task<ActionResult> PostRegister(PersonaUsuarioDto personaUsuarioDto)
@@ -93,56 +92,6 @@ namespace Evento.Api.Controllers
                 response = await RegistroUsuario(personaUsuarioDto, response);
             }
 
-            return Ok(response);
-        }
-
-        [HttpPost]
-        [Route("Verify")]
-        public ActionResult PostVerify(LoginDto loginDto)
-        {
-            var response = new ApiResponse();
-            try
-            {
-                var oUsuario = _usuarioService.GetUsuarios().FirstOrDefault(q => q.Email == loginDto.Login && q.Estado == true);
-                if (oUsuario != null)
-                {
-
-                    if (PasswordHasher.ValidatePassword(loginDto.Password, oUsuario.Clave, oUsuario.ClaveSalt))
-                    {
-                        var pPersona = _personaService.GetPersonas().FirstOrDefault(q => q.Id == oUsuario.IdPersona);
-                        var personaUsuarioDto = _mapper.Map<PersonaUsuarioDto>(pPersona);
-                        var oUsuRol = _usuarioRolService.GetUsuarioRoles().FirstOrDefault(q => q.IdUsuario == oUsuario.Id);
-                        personaUsuarioDto.Email = oUsuario.Email;
-                        personaUsuarioDto.IdRol = oUsuRol.IdRol;
-                        var token = GenerateToken(personaUsuarioDto);
-                        UserResponse userResponse = new UserResponse();
-                        userResponse.IdPersona = oUsuario.IdPersona;
-                        userResponse.IdUsuario = oUsuario.Id;
-                        userResponse.IdRol = oUsuRol.IdRol;
-                        userResponse.Email = oUsuario.Email;
-                        userResponse.Token = token;
-                        response.Exito = 1;
-                        response.Data = userResponse;
-                    }
-                    else
-                    {
-                        response.Exito = 0;
-                        response.Mensaje = "Usuario o Password Incorrectos";
-                        response.Data = false;
-                    }
-                }
-                else
-                {
-                    response.Exito = 0;
-                    response.Mensaje = "Usuario No registrados";
-                    response.Data = false;
-                }
-
-            }
-            catch (Exception ex)
-            {
-                response.Mensaje = ex.Message;
-            }
             return Ok(response);
         }
 
@@ -239,13 +188,14 @@ namespace Evento.Api.Controllers
 
                 var data = new
                 {
-                    usuario = new { 
+                    usuario = new
+                    {
                         email = resultDto.Email,
                         id = resultDto.Id,
                     },
                     rol = resultRolDto,
                     congreso = resultCongresoDto,
-                    persona =  rDtoPersona
+                    persona = rDtoPersona
                 };
 
                 response.Exito = 1;
@@ -258,6 +208,58 @@ namespace Evento.Api.Controllers
             return Ok(response);
         }
 
+
+
+
+        [HttpPost]
+        [Route("Verify")]
+        public ActionResult PostVerify(LoginDto loginDto)
+        {
+            var response = new ApiResponse();
+            try
+            {
+                var oUsuario = _usuarioService.GetUsuarios().FirstOrDefault(q => q.Email == loginDto.Login && q.Estado == true);
+                if (oUsuario != null)
+                {
+
+                    if (PasswordHasher.ValidatePassword(loginDto.Password, oUsuario.Clave, oUsuario.ClaveSalt))
+                    {
+                        //var pPersona = _personaService.GetPersonas().FirstOrDefault(q => q.Id == oUsuario.IdPersona);
+                        //var personaUsuarioDto = _mapper.Map<PersonaUsuarioDto>(pPersona);
+                        var oUsuRol = _usuarioRolService.GetUsuarioRoles().FirstOrDefault(q => q.IdUsuario == oUsuario.Id);
+                        //personaUsuarioDto.Email = oUsuario.Email;
+                        //personaUsuarioDto.IdRol = oUsuRol.IdRol;
+                        var token = GenerateToken(oUsuario.Id, oUsuario.Email, oUsuRol.IdRol);
+                        //UserResponse userResponse = new UserResponse();
+                        //userResponse.IdPersona = oUsuario.IdPersona;
+                        //userResponse.IdUsuario = oUsuario.Id;
+                        //userResponse.IdRol = oUsuRol.IdRol;
+                        //userResponse.Email = oUsuario.Email;
+                        //userResponse.Token = token;
+                        response.Exito = 1;
+                        response.Data = token;
+                    }
+                    else
+                    {
+                        response.Exito = 0;
+                        response.Mensaje = "Usuario o Password Incorrectos";
+                        response.Data = false;
+                    }
+                }
+                else
+                {
+                    response.Exito = 0;
+                    response.Mensaje = "Usuario No registrados";
+                    response.Data = false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
 
         [HttpPut]
         [Route("Update")]
@@ -281,25 +283,63 @@ namespace Evento.Api.Controllers
             return Ok(response);
         }
 
-        private string GenerateToken(PersonaUsuarioDto personaUsuario)
+
+
+        [HttpGet]
+        [Route("VerifyToken")]
+        public IActionResult GetVerifyToken()
+        {
+            var response = new ApiResponse();
+            var token = HttpContext.Request.Headers["token"];
+            //var token = request.Headers.GetValues("token").FirstOrDefault();
+            if (ValidateToken(token[0]))
+            {
+                string idUsuario = GetClaim(token, ClaimTypes.NameIdentifier);
+                string email = GetClaim(token, ClaimTypes.Email);
+                string idRol = GetClaim(token, ClaimTypes.Role);
+
+                var data = new
+                {
+                    IdUsuario = idUsuario,
+                    Email = email,
+                    IdRol = idRol
+                };
+                response.Exito = 1;
+                response.Data = data;
+            }
+            else
+            {
+                response.Exito = 0;
+                response.Mensaje = "No se puede verificar el Token";
+                response.Data = null;
+            }
+            return Ok(response);
+        }
+
+
+        //private string GenerateToken(PersonaUsuarioDto personaUsuario)
+        private string GenerateToken(int IdUsuario, string Email, int IdRol)
         {
             // Leemos el secret_key desde nuestro appseting
             var secretKey = _configuration["Authentication:SecretKey"];
             //Header
             var symetricSecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
-            var signingCredentials = new SigningCredentials(symetricSecurityKey, SecurityAlgorithms.HmacSha256);
+            var signingCredentials = new SigningCredentials(symetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
             var header = new JwtHeader(signingCredentials);
 
             //Claims
             var claims = new[]
             {
-                 new Claim(ClaimTypes.Name, string.Concat(personaUsuario.Nombres," ", personaUsuario.Paterno, " ", personaUsuario.Materno)),
-                 new Claim(ClaimTypes.Email, personaUsuario.Email),
-                 new Claim(ClaimTypes.Role, personaUsuario.IdRol.ToString())
+                 //new Claim(ClaimTypes.Name, string.Concat(personaUsuario.Nombres," ", personaUsuario.Paterno, " ", personaUsuario.Materno)),
+                 //new Claim(ClaimTypes.Email, personaUsuario.Email),
+                 //new Claim(ClaimTypes.Role, personaUsuario.IdRol.ToString()),
+                 new Claim(ClaimTypes.NameIdentifier, IdUsuario.ToString()),
+                 new Claim(ClaimTypes.Email, Email),
+                 new Claim(ClaimTypes.Role, IdRol.ToString()),
             };
 
             //Payload Issuer y Audience no definido
-            var payload = new JwtPayload("", "", claims, DateTime.Now, DateTime.UtcNow.AddMinutes(5)
+            var payload = new JwtPayload("", "", claims, DateTime.Now, DateTime.UtcNow.AddDays(1)
                 );
 
             ////generar
@@ -307,5 +347,43 @@ namespace Evento.Api.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        private bool ValidateToken(string token)
+        {
+            // Leemos el secret_key desde nuestro appseting
+            var secretKey = _configuration["Authentication:SecretKey"];
+            //Header
+            var symetricSecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+            //string myIssuer = string.Empty;
+            //string myAudience = string.Empty;
+            var tokenHandler = new JwtSecurityTokenHandler();
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    //ValidIssuer = myIssuer,
+                    //ValidAudience = myAudience,
+                    IssuerSigningKey = symetricSecurityKey
+                }, out SecurityToken validatedToken);
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public string GetClaim(string token, string claimType)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+
+            var stringClaimValue = securityToken.Claims.First(claim => claim.Type == claimType).Value;
+            return stringClaimValue;
+        }
     }
 }
+

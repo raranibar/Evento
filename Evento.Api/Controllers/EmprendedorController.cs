@@ -26,13 +26,15 @@ namespace Evento.Api.Controllers
 
         public EmprendedorController(IEmprendedorService emprendedorService, 
             IEmprendedorRedSocialService emprendedorRedSocialService, IRedSocialService redSocialService,
-            IUsuarioService _usuarioService, IPersonaService personaService,
+            IUsuarioService usuarioService, IPersonaService personaService,
             IMapper mapper)
         {
             _emprendedorService = emprendedorService;
             _emprendedorRedSocialService = emprendedorRedSocialService;
             _redSocialService = redSocialService;
             _personaService = personaService;
+            _usuarioService = usuarioService;
+
             _mapper = mapper;
         }
 
@@ -80,7 +82,6 @@ namespace Evento.Api.Controllers
             var response = new ApiResponse();
             try
             {
-              
                 var result = await _emprendedorService.GetEmprendedor(id);
                 var resultDto = _mapper.Map<EmprendedorDto>(result);
 
@@ -113,6 +114,52 @@ namespace Evento.Api.Controllers
             }
             return Ok(response);
         }
+
+
+        [Route("user")]
+        public async Task<IActionResult> GetEmprendedorByUser(int id)
+        {
+            var response = new ApiResponse();
+            try
+            {
+                var rUsuario =  await _usuarioService.GetUsuario(id);
+                var rDtoUsuario = _mapper.Map<Usuario>(rUsuario);
+
+                var rPersona =  await _personaService.GetPersona(rDtoUsuario.IdPersona);
+                var rDtoPersona = _mapper.Map<PersonaDto>(rPersona);
+
+                var result = _emprendedorService.GetEmprendedores().Where(x => x.IdPersona == rDtoPersona.Id).ToList();
+                var resultDto = _mapper.Map<EmprendedorDto>(result[0]);
+
+                var rEmpRed = _emprendedorRedSocialService.GetEmprendedorRedSociales().Where(x => x.IdEmprendedor ==resultDto.Id);
+                var resultRed = _mapper.Map<IEnumerable<EmprendedorRedSocialDto>>(rEmpRed);
+
+                foreach (var item in resultRed)
+                {
+                    var rEmpSocial = await _redSocialService.GetRedSocial(item.IdRedSocial);
+                    var resultSocial = _mapper.Map<RedSocialDto>(rEmpSocial);
+                    item.Nombre = resultSocial.Nombre;
+                    item.Logo = resultSocial.Logo;
+
+                }
+                var data = new
+                {
+                    emprendedor = resultDto,
+                    persona = rDtoPersona,
+                    social = resultRed
+                };
+                response.Exito = 1;
+                response.Data = data;
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
+
+
 
         [HttpPut]
         public async Task<IActionResult> PutEmprendedor(Emprendedor emprendedor)
