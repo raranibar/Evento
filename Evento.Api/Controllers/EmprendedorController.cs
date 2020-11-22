@@ -121,6 +121,7 @@ namespace Evento.Api.Controllers
             try
             {
                 var oEmprendedor = _mapper.Map<Emprendedor>(emprendedor);
+                oEmprendedor.Estado = true;
                 bool result = await _emprendedorService.PutEmprendedor(oEmprendedor);
 
                 foreach (var item in oEmprendedor.EmprendedorRedSocial)
@@ -131,6 +132,7 @@ namespace Evento.Api.Controllers
 
                 response.Exito = 1;
                 response.Data = true;
+                response.Mensaje = "Emprendimiento modificado correctamente";
             }
             catch (Exception ex)
             {

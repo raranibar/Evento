@@ -34,9 +34,9 @@ namespace Evento.Api.Controllers
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
 
-        public AccountController(IPersonaService personaService, 
-                                 IUsuarioService usuarioService, 
-                                 ICongresoUsuarioService congresoUsuarioService, 
+        public AccountController(IPersonaService personaService,
+                                 IUsuarioService usuarioService,
+                                 ICongresoUsuarioService congresoUsuarioService,
                                  IUsuarioRolService usuarioRolService,
                                  IRedSocialService redSocialService,
                                  IEmprendedorService emprendedorService,
@@ -138,7 +138,7 @@ namespace Evento.Api.Controllers
                     response.Data = false;
                 }
 
-                }
+            }
             catch (Exception ex)
             {
                 response.Mensaje = ex.Message;
@@ -168,41 +168,44 @@ namespace Evento.Api.Controllers
                     oUsuarioRol.IdUsuario = oUsuario.Id;
                     await _usuarioRolService.PostUsuarioRol(oUsuarioRol);
 
-                    var oEmprendedor = _mapper.Map<Emprendedor>(personaUsuarioDto);
-
-                    oEmprendedor = new Emprendedor
+                    if (oUsuarioRol.IdRol == 2)
                     {
-                        IdPersona = oPersona.Id,
-                        Descripcion = "Escribir descripcion",
-                        Latitud = "-21.535132",
-                        Longitud = "-64.728431",
-                        IdCategoria = 1,
-                        NombreEmprendimiento = "Escribir nombre de emprendimiento",
-                        Ubicacion = "Escribir Ubicacion",
-                        //Estado = false
-                    };
+                        var oEmprendedor = _mapper.Map<Emprendedor>(personaUsuarioDto);
 
-                    await _emprendedorService.PostEmprendedor(oEmprendedor);
-
-                    var result = _redSocialService.GetRedSociales();
-                    var resultDto = _mapper.Map<IEnumerable<RedSocialDto>>(result);
-
-                    foreach (var item in resultDto)
-                    {
-                        var e = new EmprendedorRedSocial
+                        oEmprendedor = new Emprendedor
                         {
-                            IdEmprendedor = oEmprendedor.Id,
-                            IdRedSocial = item.Id,
-                            Direccion = ""
-
+                            IdPersona = oPersona.Id,
+                            Descripcion = "Escribir descripcion",
+                            Latitud = "-21.535132",
+                            Longitud = "-64.728431",
+                            IdCategoria = 1,
+                            NombreEmprendimiento = "Escribir nombre de emprendimiento",
+                            Ubicacion = "Escribir Ubicacion",
+                            Estado = false
                         };
-                        var oEmprendedorRedSocial = _mapper.Map<EmprendedorRedSocial>(e);
-                        await _emprendedorRedSocialService.PostEmprendedorRedSocial(oEmprendedorRedSocial);
-                    }
-                   
 
+                        await _emprendedorService.PostEmprendedor(oEmprendedor);
+
+
+                        var result = _redSocialService.GetRedSociales();
+                        var resultDto = _mapper.Map<IEnumerable<RedSocialDto>>(result);
+
+                        foreach (var item in resultDto)
+                        {
+                            var e = new EmprendedorRedSocial
+                            {
+                                IdEmprendedor = oEmprendedor.Id,
+                                IdRedSocial = item.Id,
+                                Direccion = ""
+
+                            };
+                            var oEmprendedorRedSocial = _mapper.Map<EmprendedorRedSocial>(e);
+                            await _emprendedorRedSocialService.PostEmprendedorRedSocial(oEmprendedorRedSocial);
+                        }
+                    }
                     response.Exito = 1;
                     response.Data = true;
+                    response.Mensaje = "Usuario registrado correctamente";
                     transaction.Complete();
                 }
                 catch (TransactionException ex)
@@ -214,7 +217,6 @@ namespace Evento.Api.Controllers
             }
         }
 
-
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUsuario(int id)
         {
@@ -224,7 +226,7 @@ namespace Evento.Api.Controllers
                 var result = await _usuarioService.GetUsuario(id);
                 var resultDto = _mapper.Map<UsuarioDto>(result);
 
-                var resultRol =  _usuarioRolService.GetUsuarioRoles().Where(x=>x.IdUsuario==id);
+                var resultRol = _usuarioRolService.GetUsuarioRoles().Where(x => x.IdUsuario == id);
                 var resultRolDto = _mapper.Map<UsuarioRolDto>(resultRol.FirstOrDefault());
 
                 var resultCongreso = _congresoUsuarioService.GetCongresoUsuarios().Where(x => x.IdUsuario == id);
@@ -232,24 +234,20 @@ namespace Evento.Api.Controllers
 
                 var rPersona = await _personaService.GetPersona(resultDto.IdPersona);
                 var rDtoPersona = _mapper.Map<PersonaDto>(rPersona);
-               // var rDtoPersona = _mapper.Map<PersonaUsuarioDto>(rPersona);
+                // var rDtoPersona = _mapper.Map<PersonaUsuarioDto>(rPersona);
 
 
-                var data = new {
-                    usuario=resultDto,
-                    rol=resultRolDto,
-                    congreso = resultCongresoDto, 
-                    persona=rDtoPersona 
+                var data = new
+                {
+                    usuario = new { 
+                        email = resultDto.Email,
+                        id = resultDto.Id,
+                    },
+                    rol = resultRolDto,
+                    congreso = resultCongresoDto,
+                    persona =  rDtoPersona
                 };
 
-     /*           rDtoPersona.IdPersona = rPersona.Id;
-                rDtoPersona.IdUsuario = resultDto.Id;
-                rDtoPersona.Email = resultDto.Email;
-                rDtoPersona.IdCongreso = resultDto.IdCongreso;
-                rDtoPersona.IdRol = resultRolDto.IdRol;
-                rDtoPersona.IdCongreso = resultCongresoDto.IdCongreso;*/
-
-    
                 response.Exito = 1;
                 response.Data = data;
             }
@@ -261,79 +259,32 @@ namespace Evento.Api.Controllers
         }
 
 
-
-        private async Task<ApiResponse> ActualizarUsuario(PersonaUsuarioDto personaUsuarioDto, ApiResponse response)
+        [HttpPut]
+        [Route("Update")]
+        public async Task<IActionResult> ActualizarUsuario(PersonaDto personaDto)
         {
-            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            var response = new ApiResponse();
+            try
             {
-                try
-                {
-                    var oPersona = _mapper.Map<Persona>(personaUsuarioDto);
-                    await _personaService.PutPersona(oPersona);
+                var oPersona = _mapper.Map<Persona>(personaDto);
+                oPersona.Estado = true;
+                bool result = await _personaService.PutPersona(oPersona);
 
-                    var oUsuario = _mapper.Map<Usuario>(personaUsuarioDto);
-                    oUsuario.IdPersona = oPersona.Id;
-                    await _usuarioService.PutUsuario(oUsuario);
-
-                    var oCongresoUsuario = _mapper.Map<CongresoUsuario>(personaUsuarioDto);
-                    oCongresoUsuario.IdCongreso = oUsuario.IdCongreso;
-                    oCongresoUsuario.IdUsuario = oUsuario.Id;
-                    await _congresoUsuarioService.PostCongresoUsuario(oCongresoUsuario);
-
-                    var oUsuarioRol = _mapper.Map<UsuarioRol>(personaUsuarioDto);
-                    oUsuarioRol.IdUsuario = oUsuario.Id;
-                    await _usuarioRolService.PostUsuarioRol(oUsuarioRol);
-
-                    var oEmprendedor = _mapper.Map<Emprendedor>(personaUsuarioDto);
-
-                    oEmprendedor = new Emprendedor
-                    {
-                        IdPersona = oPersona.Id,
-                        Descripcion = "Escribir descripcion",
-                        Latitud = "-21.535132",
-                        Longitud = "-64.728431",
-                        IdCategoria = 1,
-                        NombreEmprendimiento = "Escribir nombre de emprendimiento",
-                        Ubicacion = "Escribir Ubicacion",
-                        //Estado = false
-                    };
-
-                    await _emprendedorService.PostEmprendedor(oEmprendedor);
-
-                    var result = _redSocialService.GetRedSociales();
-                    var resultDto = _mapper.Map<IEnumerable<RedSocialDto>>(result);
-
-                    foreach (var item in resultDto)
-                    {
-                        var e = new EmprendedorRedSocial
-                        {
-                            IdEmprendedor = oEmprendedor.Id,
-                            IdRedSocial = item.Id,
-                            Direccion = ""
-
-                        };
-                        var oEmprendedorRedSocial = _mapper.Map<EmprendedorRedSocial>(e);
-                        await _emprendedorRedSocialService.PostEmprendedorRedSocial(oEmprendedorRedSocial);
-                    }
-
-
-                    response.Exito = 1;
-                    response.Data = true;
-                    transaction.Complete();
-                }
-                catch (TransactionException ex)
-                {
-
-                    response.Mensaje = String.Format(" {0} - {1}", ex.Message, ex.InnerException);
-                }
-                return response;
+                response.Exito = 1;
+                response.Data = true;
+                response.Mensaje = "Usuario modificado correctamente";
             }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
         }
 
         private string GenerateToken(PersonaUsuarioDto personaUsuario)
         {
             // Leemos el secret_key desde nuestro appseting
-            var secretKey = _configuration["Authentication:SecretKey"];                        
+            var secretKey = _configuration["Authentication:SecretKey"];
             //Header
             var symetricSecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
             var signingCredentials = new SigningCredentials(symetricSecurityKey, SecurityAlgorithms.HmacSha256);

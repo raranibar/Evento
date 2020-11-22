@@ -141,9 +141,12 @@ namespace Evento.Api.Controllers
             string container = this._configuration.GetValue<string>("EventoSettings:ContainerImg");
             //IFormFile file = Request.Form.Files[0];
 
-            foreach (var item in data.imgDel)
+            if (data.imgDel != null)
             {
-                await _fotoService.DeleteFoto(int.Parse(item));
+                foreach (var item in data.imgDel)
+                {
+                    await _fotoService.DeleteFoto(int.Parse(item));
+                }
             }
             if (data.files != null)
             {
