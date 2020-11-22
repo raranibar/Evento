@@ -53,5 +53,21 @@ namespace Evento.Core.Helper
             pbkdf2.IterationCount = iterations;
             return pbkdf2.GetBytes(outputBytes);
         }
+
+        public static string GenerarPassword(int longitud)
+        {
+            Random rdn = new Random();
+            string caracteres = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890%$#@";
+            int lonCaracteres = caracteres.Length;
+            char letra;
+           
+            string contraseniaAleatoria = string.Empty;
+            for (int i = 0; i < longitud; i++)
+            {
+                letra = caracteres[rdn.Next(lonCaracteres)];
+                contraseniaAleatoria += letra.ToString();
+            }
+            return contraseniaAleatoria;
+        }
     }
 }
