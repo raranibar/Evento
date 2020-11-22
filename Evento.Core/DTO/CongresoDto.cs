@@ -12,5 +12,6 @@ namespace Evento.Core.DTO
         public string Direccion { get; set; }
         public string Responsable { get; set; }
         public string Logo { get; set; }
+        public Boolean Estado{ get; set; }
     }
 }

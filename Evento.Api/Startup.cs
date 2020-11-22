@@ -31,11 +31,10 @@ namespace Evento.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options => options.AddDefaultPolicy(
-                builder => builder.AllowAnyOrigin()
-                ));
+            services.AddCors();
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            var conex = Configuration.GetConnectionString("EventoDB");
+            var conex = Configuration.GetConnectionString("EventoAzure");
             var blobs = Configuration.GetConnectionString("EventoStorage");
             services.AddControllers().AddNewtonsoftJson();
             services.AddSingleton(x => new BlobServiceClient(blobs));
@@ -106,7 +105,11 @@ namespace Evento.Api
 
             app.UseRouting();
 
-            app.UseCors();
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials());
 
             app.UseAuthentication();
             app.UseAuthorization();

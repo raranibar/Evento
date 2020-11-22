@@ -37,6 +37,10 @@ namespace Evento.Infrastructure.Mappings
 
             CreateMap<Emprendedor, EmprendedorDto>();
             CreateMap<EmprendedorDto, Emprendedor>();
+            CreateMap<Emprendedor, PersonaUsuarioDto>();
+            CreateMap<PersonaUsuarioDto, Emprendedor>();
+
+
 
             CreateMap<EmprendedorRedSocial, EmprendedorRedSocialDto>();
             CreateMap<EmprendedorRedSocialDto, EmprendedorRedSocial>();

@@ -10,10 +10,9 @@ namespace Evento.Core.Entities
             EmprendedorRedSocial = new HashSet<EmprendedorRedSocial>();
         }
 
-        public int Nombre { get; set; }
+        public string Nombre { get; set; }
         public string Logo { get; set; }
 
-        public virtual DetalleClasificador IdRedSocialNavigation { get; set; }
         public virtual ICollection<EmprendedorRedSocial> EmprendedorRedSocial { get; set; }
     }
 }

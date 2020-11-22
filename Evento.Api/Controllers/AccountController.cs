@@ -27,13 +27,20 @@ namespace Evento.Api.Controllers
         private readonly IUsuarioService _usuarioService;
         private readonly ICongresoUsuarioService _congresoUsuarioService;
         private readonly IUsuarioRolService _usuarioRolService;
+        private readonly IEmprendedorService _emprendedorService;
+        private readonly IRedSocialService _redSocialService;
+        private readonly IEmprendedorRedSocialService _emprendedorRedSocialService;
+
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
 
-        public AccountController(IPersonaService personaService, 
-                                 IUsuarioService usuarioService, 
-                                 ICongresoUsuarioService congresoUsuarioService, 
-                                 IUsuarioRolService usuarioRolService, 
+        public AccountController(IPersonaService personaService,
+                                 IUsuarioService usuarioService,
+                                 ICongresoUsuarioService congresoUsuarioService,
+                                 IUsuarioRolService usuarioRolService,
+                                 IRedSocialService redSocialService,
+                                 IEmprendedorService emprendedorService,
+                                 IEmprendedorRedSocialService emprendedorRedSocialService,
                                  IMapper mapper,
                                  IConfiguration configuration)
         {
@@ -41,47 +48,14 @@ namespace Evento.Api.Controllers
             _usuarioService = usuarioService;
             _congresoUsuarioService = congresoUsuarioService;
             _usuarioRolService = usuarioRolService;
+            _emprendedorService = emprendedorService;
+            _redSocialService = redSocialService;
+            _emprendedorRedSocialService = emprendedorRedSocialService;
+
             _mapper = mapper;
             _configuration = configuration;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetUsuario(int id)
-        {
-            var response = new ApiResponse();
-            try
-            {
-                var result = await _usuarioService.GetUsuario(id);
-                var resultDto = _mapper.Map<UsuarioDto>(result);
-
-                var resultRol = _usuarioRolService.GetUsuarioRoles().Where(x => x.IdUsuario == id);
-                var resultRolDto = _mapper.Map<UsuarioRolDto>(resultRol.FirstOrDefault());
-
-                var resultCongreso = _congresoUsuarioService.GetCongresoUsuarios().Where(x => x.IdUsuario == id);
-                var resultCongresoDto = _mapper.Map<CongresoUsuarioDto>(resultCongreso.FirstOrDefault());
-
-                var rPersona = await _personaService.GetPersona(resultDto.IdPersona);
-                var rDtoPersona = _mapper.Map<PersonaDto>(rPersona);
-
-                var data = new
-                {
-                    usuario = resultDto,
-                    rol = resultRolDto,
-                    congreso = resultCongresoDto,
-                    persona = rDtoPersona
-                };
-
-                response.Exito = 1;
-                response.Data = data;
-            }
-            catch (Exception ex)
-            {
-                response.Mensaje = ex.Message;
-            }
-            return Ok(response);
-        }
-
-        // Post api/Account/Register
         [HttpPost]
         [Route("Register")]
         public async Task<ActionResult> PostRegister(PersonaUsuarioDto personaUsuarioDto)
@@ -92,6 +66,7 @@ namespace Evento.Api.Controllers
                 q.NumDocumento == personaUsuarioDto.NumDocumento &&
                 q.IdTipoDocumento == personaUsuarioDto.IdTipoDocumento
             ).FirstOrDefault();
+
             var usuario = _usuarioService.GetUsuarios().Where(
                 q => q.Estado == true && q.Email == personaUsuarioDto.Email
                 ).FirstOrDefault();
@@ -119,6 +94,122 @@ namespace Evento.Api.Controllers
 
             return Ok(response);
         }
+
+        private async Task<ApiResponse> RegistroUsuario(PersonaUsuarioDto personaUsuarioDto, ApiResponse response)
+        {
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+                    var oPersona = _mapper.Map<Persona>(personaUsuarioDto);
+                    await _personaService.PostPersona(oPersona);
+
+                    var oUsuario = _mapper.Map<Usuario>(personaUsuarioDto);
+                    oUsuario.IdPersona = oPersona.Id;
+                    await _usuarioService.PostUsuario(oUsuario);
+
+                    var oCongresoUsuario = _mapper.Map<CongresoUsuario>(personaUsuarioDto);
+                    oCongresoUsuario.IdCongreso = oUsuario.IdCongreso;
+                    oCongresoUsuario.IdUsuario = oUsuario.Id;
+                    await _congresoUsuarioService.PostCongresoUsuario(oCongresoUsuario);
+
+                    var oUsuarioRol = _mapper.Map<UsuarioRol>(personaUsuarioDto);
+                    oUsuarioRol.IdUsuario = oUsuario.Id;
+                    await _usuarioRolService.PostUsuarioRol(oUsuarioRol);
+
+                    if (oUsuarioRol.IdRol == 2)
+                    {
+                        var oEmprendedor = _mapper.Map<Emprendedor>(personaUsuarioDto);
+
+                        oEmprendedor = new Emprendedor
+                        {
+                            IdPersona = oPersona.Id,
+                            Descripcion = "Escribir descripcion",
+                            Latitud = "-21.535132",
+                            Longitud = "-64.728431",
+                            IdCategoria = 1,
+                            NombreEmprendimiento = "Escribir nombre de emprendimiento",
+                            Ubicacion = "Escribir Ubicacion",
+                            Estado = false
+                        };
+
+                        await _emprendedorService.PostEmprendedor(oEmprendedor);
+
+
+                        var result = _redSocialService.GetRedSociales();
+                        var resultDto = _mapper.Map<IEnumerable<RedSocialDto>>(result);
+
+                        foreach (var item in resultDto)
+                        {
+                            var e = new EmprendedorRedSocial
+                            {
+                                IdEmprendedor = oEmprendedor.Id,
+                                IdRedSocial = item.Id,
+                                Direccion = ""
+
+                            };
+                            var oEmprendedorRedSocial = _mapper.Map<EmprendedorRedSocial>(e);
+                            await _emprendedorRedSocialService.PostEmprendedorRedSocial(oEmprendedorRedSocial);
+                        }
+                    }
+                    response.Exito = 1;
+                    response.Data = true;
+                    response.Mensaje = "Usuario registrado correctamente";
+                    transaction.Complete();
+                }
+                catch (TransactionException ex)
+                {
+
+                    response.Mensaje = String.Format(" {0} - {1}", ex.Message, ex.InnerException);
+                }
+                return response;
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUsuario(int id)
+        {
+            var response = new ApiResponse();
+            try
+            {
+                var result = await _usuarioService.GetUsuario(id);
+                var resultDto = _mapper.Map<UsuarioDto>(result);
+
+                var resultRol = _usuarioRolService.GetUsuarioRoles().Where(x => x.IdUsuario == id);
+                var resultRolDto = _mapper.Map<UsuarioRolDto>(resultRol.FirstOrDefault());
+
+                var resultCongreso = _congresoUsuarioService.GetCongresoUsuarios().Where(x => x.IdUsuario == id);
+                var resultCongresoDto = _mapper.Map<CongresoUsuarioDto>(resultCongreso.FirstOrDefault());
+
+                var rPersona = await _personaService.GetPersona(resultDto.IdPersona);
+                var rDtoPersona = _mapper.Map<PersonaDto>(rPersona);
+                // var rDtoPersona = _mapper.Map<PersonaUsuarioDto>(rPersona);
+
+
+                var data = new
+                {
+                    usuario = new
+                    {
+                        email = resultDto.Email,
+                        id = resultDto.Id,
+                    },
+                    rol = resultRolDto,
+                    congreso = resultCongresoDto,
+                    persona = rDtoPersona
+                };
+
+                response.Exito = 1;
+                response.Data = data;
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
+
+
 
         [HttpPost]
         [Route("Verify")]
@@ -162,48 +253,37 @@ namespace Evento.Api.Controllers
                     response.Data = false;
                 }
 
-                }
+            }
             catch (Exception ex)
             {
                 response.Mensaje = ex.Message;
             }
             return Ok(response);
         }
-        
-        private async Task<ApiResponse> RegistroUsuario(PersonaUsuarioDto personaUsuarioDto, ApiResponse response)
+
+        [HttpPut]
+        [Route("Update")]
+        public async Task<IActionResult> ActualizarUsuario(PersonaDto personaDto)
         {
-            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            var response = new ApiResponse();
+            try
             {
-                try
-                {
-                    var oPersona = _mapper.Map<Persona>(personaUsuarioDto);
-                    await _personaService.PostPersona(oPersona);
+                var oPersona = _mapper.Map<Persona>(personaDto);
+                oPersona.Estado = true;
+                bool result = await _personaService.PutPersona(oPersona);
 
-                    var oUsuario = _mapper.Map<Usuario>(personaUsuarioDto);
-                    oUsuario.IdPersona = oPersona.Id;
-                    await _usuarioService.PostUsuario(oUsuario);
-
-                    var oCongresoUsuario = _mapper.Map<CongresoUsuario>(personaUsuarioDto);
-                    oCongresoUsuario.IdCongreso = oUsuario.IdCongreso;
-                    oCongresoUsuario.IdUsuario = oUsuario.Id;
-                    await _congresoUsuarioService.PostCongresoUsuario(oCongresoUsuario);
-
-                    var oUsuarioRol = _mapper.Map<UsuarioRol>(personaUsuarioDto);
-                    oUsuarioRol.IdUsuario = oUsuario.Id;
-                    await _usuarioRolService.PostUsuarioRol(oUsuarioRol);
-
-                    response.Exito = 1;
-                    response.Data = true;
-                    transaction.Complete();
-                }
-                catch (TransactionException ex)
-                {
-
-                    response.Mensaje = String.Format(" {0} - {1}", ex.Message, ex.InnerException);
-                }
-                return response;
+                response.Exito = 1;
+                response.Data = true;
+                response.Mensaje = "Usuario modificado correctamente";
             }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
         }
+
+
 
         [HttpGet]
         [Route("VerifyToken")]
@@ -217,6 +297,7 @@ namespace Evento.Api.Controllers
                 string idUsuario = GetClaim(token, ClaimTypes.NameIdentifier);
                 string email = GetClaim(token, ClaimTypes.Email);
                 string idRol = GetClaim(token, ClaimTypes.Role);
+
                 var data = new
                 {
                     IdUsuario = idUsuario,
@@ -235,11 +316,12 @@ namespace Evento.Api.Controllers
             return Ok(response);
         }
 
+
         //private string GenerateToken(PersonaUsuarioDto personaUsuario)
         private string GenerateToken(int IdUsuario, string Email, int IdRol)
         {
             // Leemos el secret_key desde nuestro appseting
-            var secretKey = _configuration["Authentication:SecretKey"];                        
+            var secretKey = _configuration["Authentication:SecretKey"];
             //Header
             var symetricSecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
             var signingCredentials = new SigningCredentials(symetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
@@ -266,7 +348,6 @@ namespace Evento.Api.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-      
         private bool ValidateToken(string token)
         {
             // Leemos el secret_key desde nuestro appseting
@@ -305,3 +386,4 @@ namespace Evento.Api.Controllers
         }
     }
 }
+
