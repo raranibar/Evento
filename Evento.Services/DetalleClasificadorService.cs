@@ -2,6 +2,7 @@
 using Evento.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,7 +22,8 @@ namespace Evento.Services
 
         public IEnumerable<DetalleClasificador> GetDetalleClasificadores()
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.DetalleClasificadorRepository.GetAll().Where(x=>x.Estado==true);
+
         }
 
         public Task PostDetalleClasificador(DetalleClasificador o)

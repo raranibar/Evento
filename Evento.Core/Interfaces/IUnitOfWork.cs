@@ -10,6 +10,8 @@ namespace Evento.Core.Interfaces
     {
         IRepository<Categoria> CategoriaRepository { get; }
         IRepository<Clasificador> ClasificadorRepository { get; }
+        IRepository<ClasificadorPais> ClasificadorPaisRepository { get; }
+        IRepository<ClasificadorCiudad> ClasificadorCiudadRepository { get; }
         IRepository<Comentario> ComentarioRepository { get; }
         IRepository<CongresoUsuario> CongresoUsuarioRepository { get; }
         IRepository<Congreso> CongresoRepository { get; }

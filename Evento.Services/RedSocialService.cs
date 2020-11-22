@@ -2,6 +2,7 @@
 using Evento.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,12 +18,13 @@ namespace Evento.Services
         }
         public Task<RedSocial> GetRedSocial(int id)
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.RedSocialRepository.GetById(id);
+
         }
 
         public IEnumerable<RedSocial> GetRedSociales()
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.RedSocialRepository.GetAll();
         }
 
         public Task PostRedSocial(RedSocial o)

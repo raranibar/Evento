@@ -2,6 +2,7 @@
 using Evento.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,17 +23,20 @@ namespace Evento.Services
 
         public IEnumerable<EmprendedorRedSocial> GetEmprendedorRedSociales()
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.EmprendedorRedSocialRepository.GetAll().Where(x=>x.Estado==true);
         }
 
-        public Task PostEmprendedorRedSocial(EmprendedorRedSocial o)
+        public async Task PostEmprendedorRedSocial(EmprendedorRedSocial o)
         {
-            throw new NotImplementedException();
+            await this._unitOfWork.EmprendedorRedSocialRepository.Add(o);
+            await this._unitOfWork.SaveChangesAsync();
         }
 
-        public Task<bool> PutEmprendedorRedSocial(EmprendedorRedSocial o)
+        public async Task<bool> PutEmprendedorRedSocial(EmprendedorRedSocial o)
         {
-            throw new NotImplementedException();
+            this._unitOfWork.EmprendedorRedSocialRepository.Update(o);
+            await this._unitOfWork.SaveChangesAsync();
+            return true;
         }
         public Task<bool> DeleteEmprendedorRedSocial(int id)
         {

@@ -20,12 +20,12 @@ namespace Evento.Services
 
         public Task<Usuario> GetUsuario(int id)
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.UsuarioRepository.GetById(id);
         }
 
         public IEnumerable<Usuario> GetUsuarios()
         {
-            return this._unitOfWork.UsuarioRepository.GetAll();
+            return this._unitOfWork.UsuarioRepository.GetAll().Where(x=>x.Estado==true);
         }
 
         public async Task PostUsuario(Usuario o)

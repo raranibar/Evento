@@ -45,8 +45,28 @@ namespace Evento.Services
         }
         public int TotalRaiting()
         {
-            return this._unitOfWork.RaitingRepository.GetAll().Select(x => x.Rating).Sum();
+            return _unitOfWork.RaitingRepository.GetAll().Select(x => x.Rating).Sum();
             
+        }
+
+        public decimal RaitingEmprendedor(int IdEmprendedor)
+        {
+            var lists = _unitOfWork.RaitingRepository.GetAll();
+            var suma = lists.Where(w => w.IdEmprendedor == IdEmprendedor).ToList();           
+
+            int total = this.TotalRaiting();
+
+
+            var Lista = _unitOfWork.RaitingRepository.GetAll().
+                GroupBy(q => q.IdEmprendedor).
+                Select(g => new
+                {
+                    IdEmprendedor = g.Key,
+                    Total = (g.Sum(r => r.Rating) * 100) / total
+                }).ToList();
+
+            //return (suma * 100) / total;
+            return 100;
         }
     }
 }

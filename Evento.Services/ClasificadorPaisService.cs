@@ -2,6 +2,7 @@
 using Evento.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,7 +27,7 @@ namespace Evento.Services
 
         public IEnumerable<ClasificadorPais> GetClasificadorPaises()
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.ClasificadorPaisRepository.GetAll().Where(x=>x.Estado==true).OrderBy(o => o.Pais);
         }
 
         public Task PostClasificadorPais(ClasificadorPais o)

@@ -21,7 +21,7 @@ namespace Evento.Services
 
         public IEnumerable<CongresoUsuario> GetCongresoUsuarios()
         {
-            throw new NotImplementedException();
+            return _unitOfWork.CongresoUsuarioRepository.GetAll();
         }
 
         public async Task PostCongresoUsuario(CongresoUsuario o)

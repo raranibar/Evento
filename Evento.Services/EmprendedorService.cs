@@ -2,6 +2,7 @@
 using Evento.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,22 +18,26 @@ namespace Evento.Services
 
         public Task<Emprendedor> GetEmprendedor(int id)
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.EmprendedorRepository.GetById(id);
+
         }
 
         public IEnumerable<Emprendedor> GetEmprendedores()
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.EmprendedorRepository.GetAll().Where(x=>x.Estado==true);
         }
 
-        public Task PostEmprendedor(Emprendedor o)
+        public async Task  PostEmprendedor(Emprendedor o)
         {
-            throw new NotImplementedException();
+            await this._unitOfWork.EmprendedorRepository.Add(o);
+            await this._unitOfWork.SaveChangesAsync();
         }
 
-        public Task<bool> PutEmprendedor(Emprendedor o)
+        public async Task<bool> PutEmprendedor(Emprendedor o)
         {
-            throw new NotImplementedException();
+            this._unitOfWork.EmprendedorRepository.Update(o);
+            await this._unitOfWork.SaveChangesAsync();
+            return true;
         }
         public Task<bool> DeleteEmprendedor(int id)
         {

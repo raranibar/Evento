@@ -22,7 +22,7 @@ namespace Evento.Services
 
         public IEnumerable<Congreso> GetCongresos()
         {
-            return this._unitOfWork.CongresoRepository.GetAll().Where(q => q.Estado == true); 
+            return this._unitOfWork.CongresoRepository.GetAll().Where(q => q.Estado == true);
         }
 
         public async Task PostCongreso(Congreso o)
