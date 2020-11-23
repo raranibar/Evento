@@ -40,6 +40,7 @@ namespace Evento.Services
         {
             await this._unitOfWork.FotoRepository.Delete(id);
             return true;
+           
         }
     }
 }
