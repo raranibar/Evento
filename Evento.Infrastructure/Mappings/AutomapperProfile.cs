@@ -45,6 +45,10 @@ namespace Evento.Infrastructure.Mappings
             CreateMap<EmprendedorRedSocial, EmprendedorRedSocialDto>();
             CreateMap<EmprendedorRedSocialDto, EmprendedorRedSocial>();
 
+
+            CreateMap<Expositor, ExpositorPersonaDto>();
+            CreateMap<ExpositorPersonaDto, Expositor>();
+
             CreateMap<Expositor, ExpositorDto>();
             CreateMap<ExpositorDto, Expositor>();
 
@@ -66,6 +70,10 @@ namespace Evento.Infrastructure.Mappings
             CreateMap<Participante, ParticipanteDto>();
             CreateMap<ParticipanteDto, Participante>();
 
+
+
+            CreateMap<Persona, ExpositorPersonaDto>();
+            CreateMap<ExpositorPersonaDto, Persona>();
             CreateMap<Persona, PersonaDto>();
             CreateMap<PersonaDto, Persona>();
             CreateMap<Persona, PersonaUsuarioDto>();

@@ -2,6 +2,7 @@
 using Evento.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,25 +16,29 @@ namespace Evento.Services
             this._unitOfWork = unitOfWork;
         }
 
-        public Task<Expositor> GetExpositor(int id)
+        public async Task<Expositor> GetExpositor(int id)
         {
-            throw new NotImplementedException();
+            return await this._unitOfWork.ExpositorRepository.GetById(id);
         }
 
         public IEnumerable<Expositor> GetExpositores()
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.ExpositorRepository.GetAll().Where(x => x.Estado == true);
         }
 
-        public Task PostExpositor(Expositor o)
+        public async Task PostExpositor(Expositor o)
         {
-            throw new NotImplementedException();
+            await this._unitOfWork.ExpositorRepository.Add(o);
+            await this._unitOfWork.SaveChangesAsync();
         }
 
-        public Task<bool> PutExpositor(Expositor o)
+        public async Task<bool> PutExpositor(Expositor o)
         {
-            throw new NotImplementedException();
+            this._unitOfWork.ExpositorRepository.Update(o);
+            await this._unitOfWork.SaveChangesAsync();
+            return true;
         }
+
         public Task<bool> DeleteExpositor(int id)
         {
             throw new NotImplementedException();
