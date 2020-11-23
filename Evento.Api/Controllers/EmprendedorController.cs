@@ -89,6 +89,9 @@ namespace Evento.Api.Controllers
                 var rPersona = await _personaService.GetPersona(resultDto.IdPersona);
                 var rDtoPersona = _mapper.Map<PersonaDto>(rPersona);
 
+                var rUsuario =  _usuarioService.GetUsuarios().Where(x=>x.IdPersona==rDtoPersona.Id).ToList();
+                var rDtoUsuario= _mapper.Map<UsuarioDto>(rUsuario[0]);
+
                 var rEmpRed =  _emprendedorRedSocialService.GetEmprendedorRedSociales().Where(x=>x.IdEmprendedor==id) ;
                 var resultRed = _mapper.Map<IEnumerable<EmprendedorRedSocialDto>>(rEmpRed);
 
@@ -100,9 +103,13 @@ namespace Evento.Api.Controllers
                     item.Logo = resultSocial.Logo;
 
                 }
+                   
+                
+
                 var data = new {
                     emprendedor= resultDto,
                     persona = rDtoPersona,
+                    email = rDtoUsuario.Email,
                     social = resultRed
                 };
                 response.Exito = 1; 

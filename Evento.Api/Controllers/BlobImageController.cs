@@ -68,6 +68,34 @@ namespace Evento.Api.Controllers
             return Ok(response);
         }
 
+
+        [HttpGet]
+        [Route("expositor")]
+        public IActionResult GetImagesExpo(int id)
+        {
+            var response = new ApiResponse();
+            try
+            {
+                var result = _fotoExpService.GetFotosExp().Where(x => x.IdExpositor==id).ToList();
+                if (result.Count != 0)
+                {
+                    var resultDto = _mapper.Map<FotoExp>(result[0]);
+
+                    response.Exito = 1;
+                    response.Data = resultDto;
+                }
+                else {
+                    response.Exito = 0;
+                    response.Data = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
         /*[HttpPost]
         [Route("uploadfile")]
         public async Task<IActionResult> UploadFile([FromBody] FotoUploadFileDto request)
@@ -178,5 +206,41 @@ namespace Evento.Api.Controllers
             await _blobService.DeleteBlobAsync(blobName, container);
             return Ok();
         }
+
+
+
+
+
+
+        [HttpPost("uploadexp"), DisableRequestSizeLimit]
+        public async Task<ActionResult> UploadExpositorImage([FromForm] ImageUploadExpositorDto data)
+        {
+            if (data.files != null)
+            {
+                string container = this._configuration.GetValue<string>("EventoSettings:ContainerImg");
+                var file = data.files;
+
+                var guidImage = Guid.NewGuid().ToString("N");
+                var result = await _blobService.UploadFileBlobAsync(file.OpenReadStream(), file.ContentType, guidImage + file.FileName, container);
+
+                var oFoto = new FotoExp
+                {
+                    IdExpositor = data.idExpositor,
+                    Nombre = result.ToString()
+                };
+                await this._fotoExpService.PostFotoExp(oFoto);
+
+                if (file == null)
+                {
+                    return BadRequest();
+                }
+                var toReturn = true;
+
+                return Ok(new { path = toReturn });
+            }
+            return Ok(new { path = false });
+        }
+
+
     }
 }

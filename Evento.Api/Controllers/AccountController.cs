@@ -279,7 +279,7 @@ namespace Evento.Api.Controllers
 
                 response.Exito = 1;
                 response.Data = true;
-                response.Mensaje = "Usuario modificado correctamente";
+                response.Mensaje = "Persona modificada correctamente";
             }
             catch (Exception ex)
             {

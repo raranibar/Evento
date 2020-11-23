@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Evento.Api.Response;
 using Evento.Core.DTO;
-using Evento.Core.Entities;
 using Evento.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,25 +13,27 @@ namespace Evento.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PersonaController : ControllerBase
+    public class EjeTematicoController : ControllerBase
     {
-        private readonly IPersonaService _personaService;
+        private readonly IEjeTematicoService _ejeTematicoService;
         private readonly IMapper _mapper;
 
-        public PersonaController(IPersonaService personaService, IMapper mapper)
+        public EjeTematicoController(IEjeTematicoService ejeTematicoService, IMapper mapper)
         {
-            _personaService = personaService;
+            _ejeTematicoService = ejeTematicoService;
             _mapper = mapper;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetPersona(int id)
+
+        [HttpGet]
+        public IActionResult GetEjeTematico(int id)
         {
             var response = new ApiResponse();
             try
             {
-                var result = await _personaService.GetPersona(id);
-                var resultDto = _mapper.Map<PersonaDto>(result);
+                var result = _ejeTematicoService.GetEjeTematicos().Where(x=>x.IdCongreso==id);
+                var resultDto = _mapper.Map<IEnumerable<EjeTematicoDto>>(result);
+
                 response.Exito = 1;
                 response.Data = resultDto;
             }
@@ -42,8 +43,6 @@ namespace Evento.Api.Controllers
             }
             return Ok(response);
         }
-
-
 
     }
 }
