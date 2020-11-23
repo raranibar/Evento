@@ -10,6 +10,7 @@ using AutoMapper;
 using Evento.Api.Response;
 using Evento.Core.DTO;
 using Evento.Core.Entities;
+using Evento.Core.Enumerations;
 using Evento.Core.Helper;
 using Evento.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -102,10 +103,13 @@ namespace Evento.Api.Controllers
                 try
                 {
                     var oPersona = _mapper.Map<Persona>(personaUsuarioDto);
+                    var Nombre = String.Concat(oPersona.Nombres, " ", oPersona.Paterno);
                     await _personaService.PostPersona(oPersona);
 
                     var oUsuario = _mapper.Map<Usuario>(personaUsuarioDto);
                     oUsuario.IdPersona = oPersona.Id;
+                    string GeneraClave = PasswordHasher.GenerarPassword(5);
+                    oUsuario.Clave = GeneraClave;
                     await _usuarioService.PostUsuario(oUsuario);
 
                     var oCongresoUsuario = _mapper.Map<CongresoUsuario>(personaUsuarioDto);
@@ -117,7 +121,7 @@ namespace Evento.Api.Controllers
                     oUsuarioRol.IdUsuario = oUsuario.Id;
                     await _usuarioRolService.PostUsuarioRol(oUsuarioRol);
 
-                    if (oUsuarioRol.IdRol == 2)
+                    if (oUsuarioRol.IdRol == (int)RolesUsuario.EMPRENDEDOR)
                     {
                         var oEmprendedor = _mapper.Map<Emprendedor>(personaUsuarioDto);
 
@@ -155,6 +159,7 @@ namespace Evento.Api.Controllers
                     response.Exito = 1;
                     response.Data = true;
                     response.Mensaje = "Usuario registrado correctamente";
+                    SendByEMail.SendEmailUsuario(Nombre,oUsuario.Email, GeneraClave, _configuration);
                     transaction.Complete();
                 }
                 catch (TransactionException ex)

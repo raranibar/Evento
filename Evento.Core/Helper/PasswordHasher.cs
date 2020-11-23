@@ -57,7 +57,7 @@ namespace Evento.Core.Helper
         public static string GenerarPassword(int longitud)
         {
             Random rdn = new Random();
-            string caracteres = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890%$#@";
+            string caracteres = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
             int lonCaracteres = caracteres.Length;
             char letra;
            
