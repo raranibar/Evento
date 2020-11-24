@@ -19,7 +19,7 @@ namespace Evento.Core.Helper
             string txtBody = @"<font size=5>Saludos "+Nombre+",</font><br><br>" +
                               "<font size=5>Usted tiene acceso al sistema CICE2020 (2do Congreso Internacional de Ciencias Empresariales)</font><br>" +
                               "<font size=5><b>Féria de Emprendimientos EUREKA</b><br>" +
-                              "<font size=5>sus credenciales de acceso son:</font><br><br>" +
+                              "<font size=5>sus credenciales de acceso son:</font><br>" +
                               "<font size=5>Usuario: " + EmailClient + "</font><br>" +
                               "<font size=5>Clave: " + Clave+ "</font><br>" +
                               "<font size=5>Click Para Sitio Web:<a href='" + SitioWeb + "'>CICE2020</a></font><br>" +
