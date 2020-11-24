@@ -62,6 +62,7 @@ namespace Evento.Api.Controllers
                 var result = _expositorService.GetExpositores().Where(x=>x.IdEjeTematico==id);
                 var resultDto = _mapper.Map<IEnumerable<ExpositorDto>>(result);
 
+
                 response.Exito = 1;
                 response.Data = resultDto;
             }

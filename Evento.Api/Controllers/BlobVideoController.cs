@@ -101,7 +101,7 @@ namespace Evento.Api.Controllers
                 var file = data.files;
 
                 var guidImage = Guid.NewGuid().ToString("N");
-                var result = await _blobService.UploadFileBlobAsync(file.OpenReadStream(), file.ContentType, guidImage + file.FileName, container);
+                var result = await _blobService.UploadFileBlobAsync(file.OpenReadStream(), file.ContentType, guidImage, container);
                 var oVideo = new Video
                 {
                     IdEmprendedor = data.idEmprendedor,
