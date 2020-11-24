@@ -9,5 +9,6 @@ namespace Evento.Core.DTO
     {
         public int idEmprendedor { get; set; }
         public IFormFile files { get; set; }
+        public string idDel { get; set; }
     }
 }

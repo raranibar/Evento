@@ -76,15 +76,15 @@ namespace Evento.Api.Controllers
             var response = new ApiResponse();
             try
             {
-                var result = _fotoExpService.GetFotosExp().Where(x => x.IdExpositor==id).ToList();
+                var result = _fotoExpService.GetFotosExp().Where(x => x.IdExpositor == id).ToList();
                 if (result.Count != 0)
                 {
                     var resultDto = _mapper.Map<FotoExp>(result[0]);
-
                     response.Exito = 1;
                     response.Data = resultDto;
                 }
-                else {
+                else
+                {
                     response.Exito = 0;
                     response.Data = false;
                 }
@@ -173,7 +173,10 @@ namespace Evento.Api.Controllers
             {
                 foreach (var item in data.imgDel)
                 {
-                    await _fotoService.DeleteFoto(int.Parse(item));
+                    var result = await _fotoService.GetFoto(int.Parse(item));
+                    var resultDto = _mapper.Map<Foto>(result);
+                    resultDto.Estado = false;
+                    await _fotoService.PutFoto(resultDto);
                 }
             }
             if (data.files != null)
@@ -207,14 +210,21 @@ namespace Evento.Api.Controllers
             return Ok();
         }
 
-
-
-
-
-
         [HttpPost("uploadexp"), DisableRequestSizeLimit]
         public async Task<ActionResult> UploadExpositorImage([FromForm] ImageUploadExpositorDto data)
         {
+
+            if (data.imgDel != null)
+            {
+                foreach (var item in data.imgDel)
+                {
+                    var result = await _fotoExpService.GetFotoExp(int.Parse(item));
+                    var resultDto = _mapper.Map<FotoExp>(result);
+                    resultDto.Estado = false;
+                    await _fotoExpService.PutFotoExp(resultDto);
+                }
+            }
+
             if (data.files != null)
             {
                 string container = this._configuration.GetValue<string>("EventoSettings:ContainerImg");

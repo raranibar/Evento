@@ -14,9 +14,9 @@ namespace Evento.Services
             this._unitOfWork = unitOfWork;
         }
 
-        public async Task<Video> GetVideo(int id)
+        public  Task<Video> GetVideo(int id)
         {
-            return await this._unitOfWork.VideoRepository.GetById(id);
+            return  this._unitOfWork.VideoRepository.GetById(id);
         }
 
         public IEnumerable<Video> GetVideos()
