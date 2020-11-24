@@ -95,6 +95,13 @@ namespace Evento.Api.Controllers
         [HttpPost("uploadmovie"), DisableRequestSizeLimit]
         public async Task<ActionResult> UploadProfileMovie([FromForm] VideoUploadFileDto data)
         {
+            if (data.idDel != "-1")
+            {
+                var result = await _videoService.GetVideo(int.Parse(data.idDel));
+                var resultDto = _mapper.Map<Video>(result);
+                resultDto.Estado = false;
+                await _videoService.PutVideo(resultDto);
+            }
             if (data.files != null)
             {
                 string container = this._configuration.GetValue<string>("EventoSettings:ContainerVid");
@@ -129,7 +136,7 @@ namespace Evento.Api.Controllers
             var response = new ApiResponse();
             try
             {
-                var result = _videoService.GetVideos().Where(x => x.IdEmprendedor == id);
+                var result = _videoService.GetVideos().Where(x => x.IdEmprendedor == id&& x.Estado==true);
                 var resultDto = _mapper.Map<IEnumerable<VideoDto>>(result);
                 response.Exito = 1;
                 response.Data = resultDto;

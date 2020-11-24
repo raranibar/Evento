@@ -14,9 +14,9 @@ namespace Evento.Services
             this._unitOfWork = unitOfWork;
         }
 
-        public async Task<Foto> GetFoto(int id)
+        public  Task<Foto> GetFoto(int id)
         {
-            return await this._unitOfWork.FotoRepository.GetById(id);
+            return  this._unitOfWork.FotoRepository.GetById(id);
         }
 
         public IEnumerable<Foto> GetFotos()

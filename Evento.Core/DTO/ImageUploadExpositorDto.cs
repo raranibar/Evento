@@ -9,5 +9,7 @@ namespace Evento.Core.DTO
     {
         public int idExpositor { get; set; }
         public IFormFile files { get; set; }
+        public string[] imgDel { get; set; }
+
     }
 }
