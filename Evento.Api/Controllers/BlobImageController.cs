@@ -68,6 +68,34 @@ namespace Evento.Api.Controllers
             return Ok(response);
         }
 
+
+        [HttpGet]
+        [Route("expositor")]
+        public IActionResult GetImagesExpo(int id)
+        {
+            var response = new ApiResponse();
+            try
+            {
+                var result = _fotoExpService.GetFotosExp().Where(x => x.IdExpositor==id).ToList();
+                if (result.Count != 0)
+                {
+                    var resultDto = _mapper.Map<FotoExp>(result[0]);
+
+                    response.Exito = 1;
+                    response.Data = resultDto;
+                }
+                else {
+                    response.Exito = 0;
+                    response.Data = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
         /*[HttpPost]
         [Route("uploadfile")]
         public async Task<IActionResult> UploadFile([FromBody] FotoUploadFileDto request)

@@ -52,6 +52,26 @@ namespace Evento.Api.Controllers
             return Ok(response);
         }
 
+        [HttpGet]
+        [Route("eje")]
+        public IActionResult GetExpositoresByEje(int id)
+        {
+            var response = new ApiResponse();
+            try
+            {
+                var result = _expositorService.GetExpositores().Where(x=>x.IdEjeTematico==id);
+                var resultDto = _mapper.Map<IEnumerable<ExpositorDto>>(result);
+
+                response.Exito = 1;
+                response.Data = resultDto;
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetExpositor(int id)

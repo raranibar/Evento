@@ -25,6 +25,24 @@ namespace Evento.Api.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPersona(int id)
+        {
+            var response = new ApiResponse();
+            try
+            {
+                var result = await _personaService.GetPersona(id);
+                var resultDto = _mapper.Map<PersonaDto>(result);
+                response.Exito = 1;
+                response.Data = resultDto;
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
 
 
     }
