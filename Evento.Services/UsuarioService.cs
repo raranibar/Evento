@@ -38,9 +38,15 @@ namespace Evento.Services
             await this._unitOfWork.SaveChangesAsync();
         }
 
-        public Task<bool> PutUsuario(Usuario o)
+        public async Task<bool> PutUsuario(Usuario o)
         {
-            throw new NotImplementedException();
+            string passwordSalt = PasswordHasher.GenerateSalt();
+            string hashedPassword = PasswordHasher.GenerateHash(o.Clave, passwordSalt);
+            o.Clave = hashedPassword;
+            o.ClaveSalt = passwordSalt;
+            this._unitOfWork.UsuarioRepository.Update(o);
+            await this._unitOfWork.SaveChangesAsync();
+            return true;
         }
         public Task<bool> DeleteUsuario(int id)
         {

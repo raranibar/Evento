@@ -23,6 +23,5 @@ namespace Evento.Core.DTO
         public string Email { get; set; }
         public int IdCongreso { get; set; }
         public int IdRol { get; set; }
-        public string Clave { get; set; }
     }
 }
