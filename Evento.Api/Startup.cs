@@ -34,7 +34,7 @@ namespace Evento.Api
             services.AddCors();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            var conex = Configuration.GetConnectionString("EventoAzurePro");
+            var conex = Configuration.GetConnectionString("EventoAzureDev");
             var blobs = Configuration.GetConnectionString("EventoStorage");
             services.AddControllers().AddNewtonsoftJson();
             services.AddSingleton(x => new BlobServiceClient(blobs));
