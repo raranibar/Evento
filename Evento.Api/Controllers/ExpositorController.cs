@@ -7,9 +7,11 @@ using AutoMapper;
 using Evento.Api.Response;
 using Evento.Core.DTO;
 using Evento.Core.Entities;
+using Evento.Core.Helper;
 using Evento.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace Evento.Api.Controllers
 {
@@ -17,19 +19,31 @@ namespace Evento.Api.Controllers
     [ApiController]
     public class ExpositorController : ControllerBase
     {
-    
+
         private readonly IPersonaService _personaService;
         private readonly IExpositorService _expositorService;
+        private readonly IUsuarioService _usuarioService;
+        private readonly ICongresoUsuarioService _congresoUsuarioService;
+        private readonly IUsuarioRolService _usuarioRolService;
+        private readonly IConfiguration _configuration;
 
         private readonly IMapper _mapper;
 
         public ExpositorController(
            IPersonaService personaService, IExpositorService expositorService,
+            IUsuarioService usuarioService,
+                                 ICongresoUsuarioService congresoUsuarioService,
+                                 IUsuarioRolService usuarioRolService, IConfiguration configuration,
            IMapper mapper)
         {
             _personaService = personaService;
             _expositorService = expositorService;
+            _usuarioService = usuarioService;
+            _congresoUsuarioService = congresoUsuarioService;
+            _usuarioRolService = usuarioRolService;
             _mapper = mapper;
+
+            _configuration = configuration;
         }
 
 
@@ -59,7 +73,7 @@ namespace Evento.Api.Controllers
             var response = new ApiResponse();
             try
             {
-                var result = _expositorService.GetExpositores().Where(x=>x.IdEjeTematico==id);
+                var result = _expositorService.GetExpositores().Where(x => x.IdEjeTematico == id);
                 var resultDto = _mapper.Map<IEnumerable<ExpositorDto>>(result);
 
 
@@ -84,10 +98,29 @@ namespace Evento.Api.Controllers
                 var expositorDto = _mapper.Map<ExpositorDto>(rExpositor);
 
                 var rPersona = await _personaService.GetPersona(expositorDto.IdPersona);
-                var personaDto= _mapper.Map<PersonaDto>(rPersona);
+                var personaDto = _mapper.Map<PersonaDto>(rPersona);
+
+                var rUsuario = _usuarioService.GetUsuarios().Where(x => x.IdPersona == rPersona.Id).ToList();
+
+                var cUser = new
+                {
+                    email = "",
+                    id = 0
+                };
+
+                if (rUsuario.Count != 0)
+                {
+                    var usuarioDto = _mapper.Map<UsuarioDto>(rUsuario[0]);
+                    cUser = new
+                    {
+                        email = usuarioDto.Email,
+                        id = usuarioDto.Id
+                    };
+                }
 
                 var data = new
                 {
+                    usuario = cUser,
                     persona = personaDto,
                     expositor = expositorDto
                 };
@@ -116,21 +149,52 @@ namespace Evento.Api.Controllers
                 try
                 {
                     var oPersona = _mapper.Map<Persona>(expositorPersonaDto);
+                    var Nombre = String.Concat(oPersona.Nombres, " ", oPersona.Paterno);
                     await _personaService.PostPersona(oPersona);
 
-                    var oExpositor = _mapper.Map<Expositor>(expositorPersonaDto);
-                    oExpositor.IdPersona = oPersona.Id;
-                    await _expositorService.PostExpositor(oExpositor);
+                    if (RegexUtilities.IsValidEmail(expositorPersonaDto.Email))
+                    {
+                        var lUsuario = _usuarioService.GetUsuarios().Where(x => x.IdPersona==oPersona.Id).ToList();
+                        if (lUsuario.Count() == 0)
+                        {
+                            var oUsuario = _mapper.Map<Usuario>(expositorPersonaDto);
+                            oUsuario.IdPersona = oPersona.Id;
+                            string GeneraClave = PasswordHasher.GenerarPassword(5);
+                            oUsuario.Clave = GeneraClave;
+                            await _usuarioService.PostUsuario(oUsuario);
 
-                    var idExp = _expositorService.GetExpositores().Where(x => x.IdPersona == oPersona.Id).ToList();
-                    var oIdExp= _mapper.Map<ExpositorDto>(idExp[0]);
+                            var oCongresoUsuario = _mapper.Map<CongresoUsuario>(expositorPersonaDto);
+                            oCongresoUsuario.IdCongreso = oUsuario.IdCongreso;
+                            oCongresoUsuario.IdUsuario = oUsuario.Id;
+                            await _congresoUsuarioService.PostCongresoUsuario(oCongresoUsuario);
 
 
-                    response.Exito = 1;
-                    response.Data = oIdExp.Id;
-                    response.Mensaje = "Expositor registrado correctamente";
-                    transaction.Complete();
+                            var oUsuarioRol = _mapper.Map<UsuarioRol>(expositorPersonaDto);
+                            oUsuarioRol.IdUsuario = oUsuario.Id;
+                            await _usuarioRolService.PostUsuarioRol(oUsuarioRol);
 
+
+                            var oExpositor = _mapper.Map<Expositor>(expositorPersonaDto);
+                            oExpositor.IdPersona = oPersona.Id;
+                            await _expositorService.PostExpositor(oExpositor);
+
+                            var idExp = _expositorService.GetExpositores().Where(x => x.IdPersona == oPersona.Id).ToList();
+                            var oIdExp = _mapper.Map<ExpositorDto>(idExp[0]);
+
+                            // SendByEMail.SendEmailUsuario(Nombre, oUsuario.Email, GeneraClave, _configuration);
+
+                            response.Exito = 1;
+                            response.Data = oIdExp.Id;
+                            response.Mensaje = "Expositor registrado correctamente";
+                            transaction.Complete();
+                        }
+                    }
+                    else
+                    {
+                        response.Exito = 0;
+                        response.Data = false;
+                        response.Mensaje = "Debe ingresar un email valido";
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -141,6 +205,7 @@ namespace Evento.Api.Controllers
             }
 
         }
+
 
         [HttpPut]
         public async Task<IActionResult> PutExpositor(ExpositorDto expositorDto)
@@ -161,9 +226,12 @@ namespace Evento.Api.Controllers
                 response.Mensaje = ex.Message;
             }
             return Ok(response);
+
+
+
         }
 
-       [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExpositor(int id)
         {
             var response = new ApiResponse();
@@ -186,5 +254,5 @@ namespace Evento.Api.Controllers
         }
     }
 
-  
+
 }

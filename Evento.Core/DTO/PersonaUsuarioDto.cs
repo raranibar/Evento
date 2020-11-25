@@ -19,7 +19,8 @@ namespace Evento.Core.DTO
         public int IdCiudad { get; set; }
         public string Direccion { get; set; }
         public string NumDocumento { get; set; }
-        public int IdTipoDocumento { get; set; }        
+        public int IdTipoDocumento { get; set; }       
+        
         public string Email { get; set; }
         public int IdCongreso { get; set; }
         public int IdRol { get; set; }

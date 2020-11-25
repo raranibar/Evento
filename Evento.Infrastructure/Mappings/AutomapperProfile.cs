@@ -21,6 +21,8 @@ namespace Evento.Infrastructure.Mappings
             CreateMap<Comentario, ComentarioDto>();
             CreateMap<ComentarioDto, Comentario>();
 
+            CreateMap<CongresoUsuario, ExpositorPersonaDto>();
+            CreateMap<ExpositorPersonaDto, CongresoUsuario>();
             CreateMap<CongresoUsuario, CongresoUsuarioDto>();
             CreateMap<CongresoUsuarioDto, CongresoUsuario>();
             CreateMap<CongresoUsuario, PersonaUsuarioDto>();
@@ -88,6 +90,9 @@ namespace Evento.Infrastructure.Mappings
             CreateMap<Rol, RolDto>();
             CreateMap<RolDto, Rol>();
 
+
+            CreateMap<Usuario, ExpositorPersonaDto>();
+            CreateMap<ExpositorPersonaDto, Usuario>();
             CreateMap<Usuario, UsuarioDto>();
             CreateMap<UsuarioDto, Usuario>();
             CreateMap<Usuario, PersonaUsuarioDto>();
@@ -96,6 +101,9 @@ namespace Evento.Infrastructure.Mappings
             CreateMap<UploadFileRequest, UploadFileDto>();
             CreateMap<UploadFileDto, UploadFileRequest>();
 
+
+            CreateMap<UsuarioRol, ExpositorPersonaDto>();
+            CreateMap<ExpositorPersonaDto, UsuarioRol>();
             CreateMap<UsuarioRol, UsuarioRolDto>();
             CreateMap<UsuarioRolDto, UsuarioRol>();
             CreateMap<UsuarioRol, PersonaUsuarioDto>();
