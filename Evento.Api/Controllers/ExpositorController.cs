@@ -25,22 +25,23 @@ namespace Evento.Api.Controllers
         private readonly IUsuarioService _usuarioService;
         private readonly ICongresoUsuarioService _congresoUsuarioService;
         private readonly IUsuarioRolService _usuarioRolService;
+        private readonly IvPersonaExpositorService _vPersonaExpositorService;
         private readonly IConfiguration _configuration;
 
         private readonly IMapper _mapper;
 
         public ExpositorController(
-           IPersonaService personaService, IExpositorService expositorService,
-            IUsuarioService usuarioService,
-                                 ICongresoUsuarioService congresoUsuarioService,
-                                 IUsuarioRolService usuarioRolService, IConfiguration configuration,
-           IMapper mapper)
+            IPersonaService personaService, IExpositorService expositorService,
+            IUsuarioService usuarioService, ICongresoUsuarioService congresoUsuarioService,
+            IUsuarioRolService usuarioRolService, IConfiguration configuration,
+            IvPersonaExpositorService vPersonaExpositorService, IMapper mapper)
         {
             _personaService = personaService;
             _expositorService = expositorService;
             _usuarioService = usuarioService;
             _congresoUsuarioService = congresoUsuarioService;
             _usuarioRolService = usuarioRolService;
+            _vPersonaExpositorService = vPersonaExpositorService;
             _mapper = mapper;
 
             _configuration = configuration;
@@ -136,9 +137,25 @@ namespace Evento.Api.Controllers
         }
 
 
+        [HttpGet]
+        [Route("personaexpositor")]
+        public IActionResult GetPersonaExpositor()
+        {
+            var response = new ApiResponse();
+            try
+            {
+                var result = _vPersonaExpositorService.GevPersonaExpositors();
+                var resultDto = _mapper.Map<IEnumerable<vPersonaExpositorDto>>(result);
 
-
-
+                response.Exito = 1;
+                response.Data = resultDto;
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
 
         [HttpPost]
         public async Task<IActionResult> PostExpositor(ExpositorPersonaDto expositorPersonaDto)

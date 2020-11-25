@@ -36,6 +36,7 @@ namespace Evento.Infrastructure.Repositories
         private readonly IRepository<Usuario> _usuarioRepository;
         private readonly IRepository<UsuarioRol> _usuarioRolRepository;
         private readonly IRepository<Video> _videoRepository;
+        private readonly IRepository<vPersonaExpositor> _vPersonaExpositorRepository;
 
         private readonly EventoDevContext _context;
 
@@ -43,7 +44,7 @@ namespace Evento.Infrastructure.Repositories
         {
             this._context = context;
         }
-
+        
         public IRepository<Categoria> CategoriaRepository => _categoriaRepository ?? new BaseRepository<Categoria>(_context);
         public IRepository<Clasificador> ClasificadorRepository => _clasificadorRepository ?? new BaseRepository<Clasificador>(_context);
         public IRepository<ClasificadorPais> ClasificadorPaisRepository => _clasificadorPaisRepository ?? new BaseRepository<ClasificadorPais>(_context);
@@ -70,6 +71,7 @@ namespace Evento.Infrastructure.Repositories
         public IRepository<Usuario> UsuarioRepository => _usuarioRepository ?? new BaseRepository<Usuario>(_context);
         public IRepository<UsuarioRol> UsuarioRolRepository => _usuarioRolRepository ?? new BaseRepository<UsuarioRol>(_context);
         public IRepository<Video> VideoRepository => _videoRepository ?? new BaseRepository<Video>(_context);
+        public IRepository<vPersonaExpositor> vPersonaExpositorRepository => _vPersonaExpositorRepository ?? new BaseRepository<vPersonaExpositor>(_context);
         public void Dispose()
         {
             if (_context != null)
