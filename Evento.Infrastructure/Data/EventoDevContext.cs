@@ -33,9 +33,11 @@ namespace Evento.Infrastructure.Data
         public virtual DbSet<PaginaMemoria> PaginaMemoria { get; set; }
         public virtual DbSet<Participante> Participante { get; set; }
         public virtual DbSet<Persona> Persona { get; set; }
+        public virtual DbSet<Programa> Programa { get; set; }
         public virtual DbSet<Raiting> Raiting { get; set; }
         public virtual DbSet<RedSocial> RedSocial { get; set; }
         public virtual DbSet<Rol> Rol { get; set; }
+        public virtual DbSet<Sala> Sala { get; set; }
         public virtual DbSet<Usuario> Usuario { get; set; }
         public virtual DbSet<UsuarioRol> UsuarioRol { get; set; }
         public virtual DbSet<Video> Video { get; set; }
@@ -438,6 +440,37 @@ namespace Evento.Infrastructure.Data
                     .HasConstraintName("FK_Persona_DetalleClasificador");
             });
 
+            modelBuilder.Entity<Programa>(entity =>
+            {
+                entity.Property(e => e.CodigoAccesoZoom)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Fecha).HasColumnType("date");
+
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
+                entity.Property(e => e.IdReunionZoom)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.UrlZoom) 
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.HasOne(d => d.IdExpositorNavigation)
+                    .WithMany(p => p.Programa)
+                    .HasForeignKey(d => d.IdExpositor)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Programa_Expositor");
+
+                entity.HasOne(d => d.IdSalaNavigation)
+                    .WithMany(p => p.Programa)
+                    .HasForeignKey(d => d.IdSala)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Programa_Sala");
+            });
+
             modelBuilder.Entity<Raiting>(entity =>
             {
                 entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
@@ -469,6 +502,14 @@ namespace Evento.Infrastructure.Data
                 entity.Property(e => e.Nombre)
                     .IsRequired()
                     .HasMaxLength(50);
+            });
+            modelBuilder.Entity<Sala>(entity =>
+            {
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+
+                entity.Property(e => e.Nombre)
+                    .IsRequired()
+                    .HasMaxLength(100);
             });
 
             modelBuilder.Entity<Usuario>(entity =>

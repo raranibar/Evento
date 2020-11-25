@@ -13,10 +13,12 @@ namespace Evento.Infrastructure.Repositories
     public class BaseRepository<T> : IRepository<T> where T : BaseEntity
     {
         private DbSet<T> _entities;
+        private EventoDevContext _context;
 
         public BaseRepository(EventoDevContext context)
         {
-            this._entities = context.Set<T>();
+            _context = context;
+            this._entities = context.Set<T>();            
         }
 
         public IEnumerable<T> GetAll()

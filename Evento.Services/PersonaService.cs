@@ -42,6 +42,6 @@ namespace Evento.Services
             await this._unitOfWork.PersonaRepository.Delete(id);
             await this._unitOfWork.SaveChangesAsync();
             return true;
-        }
+        }       
     }
 }
