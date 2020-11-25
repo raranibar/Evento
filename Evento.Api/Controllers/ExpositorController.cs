@@ -181,7 +181,7 @@ namespace Evento.Api.Controllers
                             var idExp = _expositorService.GetExpositores().Where(x => x.IdPersona == oPersona.Id).ToList();
                             var oIdExp = _mapper.Map<ExpositorDto>(idExp[0]);
 
-                            // SendByEMail.SendEmailUsuario(Nombre, oUsuario.Email, GeneraClave, _configuration);
+                            SendByEMail.SendEmailUsuario(Nombre, oUsuario.Email, GeneraClave, _configuration);
 
                             response.Exito = 1;
                             response.Data = oIdExp.Id;

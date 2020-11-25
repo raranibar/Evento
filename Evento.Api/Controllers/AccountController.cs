@@ -300,7 +300,7 @@ namespace Evento.Api.Controllers
                         oUsuarioRol.IdUsuario = oUsuario.Id;
                         await _usuarioRolService.PostUsuarioRol(oUsuarioRol);
 
-                        //SendByEMail.SendEmailUsuario(Nombre, oUsuario.Email, GeneraClave, _configuration);
+                        SendByEMail.SendEmailUsuario(Nombre, oUsuario.Email, GeneraClave, _configuration);
                         response.Exito = 1;
                         response.Data = true;
                         response.Mensaje = "Datos de Usuario actualizado correctamente";
