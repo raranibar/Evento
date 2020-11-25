@@ -9,6 +9,7 @@ namespace Evento.Core.DTO
 
         public int  IdPersona {get; set; }
         public int IdExpositor { get; set; }
+        public int Id { get; set; }
 
         public string Nombres { get; set; }
         public string Paterno { get; set; }
@@ -20,6 +21,11 @@ namespace Evento.Core.DTO
         public string Direccion { get; set; }
         public string NumDocumento { get; set; }
         public int IdTipoDocumento { get; set; }
+
+
+        public string Email { get; set; }
+        public int IdCongreso { get; set; }
+        public int IdRol { get; set; }
 
         public string NombreExposicion { get; set; }
         public string Institucion { get; set; }

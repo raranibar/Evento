@@ -159,7 +159,7 @@ namespace Evento.Api.Controllers
                     response.Exito = 1;
                     response.Data = true;
                     response.Mensaje = "Usuario registrado correctamente";
-                    SendByEMail.SendEmailUsuario(Nombre,oUsuario.Email, GeneraClave, _configuration);
+                    SendByEMail.SendEmailUsuario(Nombre, oUsuario.Email, GeneraClave, _configuration);
                     transaction.Complete();
                 }
                 catch (TransactionException ex)
@@ -268,18 +268,58 @@ namespace Evento.Api.Controllers
 
         [HttpPut]
         [Route("Update")]
-        public async Task<IActionResult> ActualizarUsuario(PersonaDto personaDto)
+        public async Task<IActionResult> ActualizarUsuario(ExpositorPersonaDto expositorPersonaDto)
         {
             var response = new ApiResponse();
             try
             {
-                var oPersona = _mapper.Map<Persona>(personaDto);
+                var oPersona = _mapper.Map<Persona>(expositorPersonaDto);
                 oPersona.Estado = true;
+                var Nombre = String.Concat(oPersona.Nombres, " ", oPersona.Paterno);
+
                 bool result = await _personaService.PutPersona(oPersona);
 
-                response.Exito = 1;
-                response.Data = true;
-                response.Mensaje = "Persona modificada correctamente";
+                if (RegexUtilities.IsValidEmail(expositorPersonaDto.Email))
+                {
+                    var lUsuario = _usuarioService.GetUsuarios().Where(x => x.IdPersona==oPersona.Id).ToList();
+                    if (lUsuario.Count() == 0)
+                    {
+                        expositorPersonaDto.Id = 0;
+                        var oUsuario = _mapper.Map<Usuario>(expositorPersonaDto);
+                        oUsuario.IdPersona = oPersona.Id;
+                        string GeneraClave = PasswordHasher.GenerarPassword(5);
+                        oUsuario.Clave = GeneraClave;
+                        await _usuarioService.PostUsuario(oUsuario);
+
+                        var oCongresoUsuario = _mapper.Map<CongresoUsuario>(expositorPersonaDto);
+                        oCongresoUsuario.IdCongreso = oUsuario.IdCongreso;
+                        oCongresoUsuario.IdUsuario = oUsuario.Id;
+                        await _congresoUsuarioService.PostCongresoUsuario(oCongresoUsuario);
+
+                        var oUsuarioRol = _mapper.Map<UsuarioRol>(expositorPersonaDto);
+                        oUsuarioRol.IdUsuario = oUsuario.Id;
+                        await _usuarioRolService.PostUsuarioRol(oUsuarioRol);
+
+                        //SendByEMail.SendEmailUsuario(Nombre, oUsuario.Email, GeneraClave, _configuration);
+                        response.Exito = 1;
+                        response.Data = true;
+                        response.Mensaje = "Datos de Usuario actualizado correctamente";
+                    }
+                    else
+                    {
+                        response.Exito = 1;
+                        response.Data = true;
+                        response.Mensaje = "Datos de Expositor actualizado correctamente";
+                    }
+                }
+                else
+                {
+                    response.Exito = 0;
+                    response.Data = false;
+                    response.Mensaje = "Correo electronico invalido";
+                }
+
+
             }
             catch (Exception ex)
             {
