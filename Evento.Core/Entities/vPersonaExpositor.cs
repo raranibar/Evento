@@ -6,12 +6,12 @@ namespace Evento.Core.Entities
 {
     public class vPersonaExpositor : BaseEntity
     {        
+        public int IdPersona { get; set; }
         public string Nombres { get; set; }
         public string Paterno { get; set; }
         public string Materno { get; set; }
         public string Pais { get; set; }
-        public int IdEjeTematico { get; set; }
-        public int IdExpositor { get; set; }
+        public int IdEjeTematico { get; set; }        
         public string NombreExposicion { get; set; }
         public string Institucion { get; set; }
         public string ResumenCV { get; set; }

@@ -7,6 +7,7 @@ namespace Evento.Core.DTO
     public class vPersonaExpositorDto
     {
         public int Id { get; set; }
+        public int IdPersona { get; set; }
         public string Nombres { get; set; }
         public string Paterno { get; set; }
         public string Materno { get; set; }
