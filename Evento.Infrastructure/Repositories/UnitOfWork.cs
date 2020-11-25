@@ -44,12 +44,6 @@ namespace Evento.Infrastructure.Repositories
             this._context = context;
         }
 
-        public EventoDevContext Open()
-        {
-            var eventoDevContext = new EventoDevContext();
-            return eventoDevContext;
-        }
-
         public IRepository<Categoria> CategoriaRepository => _categoriaRepository ?? new BaseRepository<Categoria>(_context);
         public IRepository<Clasificador> ClasificadorRepository => _clasificadorRepository ?? new BaseRepository<Clasificador>(_context);
         public IRepository<ClasificadorPais> ClasificadorPaisRepository => _clasificadorPaisRepository ?? new BaseRepository<ClasificadorPais>(_context);
