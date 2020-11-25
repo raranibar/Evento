@@ -8,8 +8,7 @@ namespace Evento.Core.Entities
         public Expositor()
         {
             FotoExp = new HashSet<FotoExp>();
-            Horario = new HashSet<Horario>();
-            Programa = new HashSet<Programa>();
+            Horario = new HashSet<Horario>();           
         }
         public string NombreExposicion { get; set; }
         public string Institucion { get; set; }
@@ -21,6 +20,5 @@ namespace Evento.Core.Entities
         public virtual Persona IdPersonaNavigation { get; set; }
         public virtual ICollection<Horario> Horario { get; set; }
         public virtual ICollection<FotoExp> FotoExp { get; set; }
-        public virtual ICollection<Programa> Programa { get; set; }
     }
 }

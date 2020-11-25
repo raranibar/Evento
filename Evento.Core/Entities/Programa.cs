@@ -13,9 +13,9 @@ namespace Evento.Core.Entities
         public string CodigoAccesoZoom { get; set; }
 
         public int IdSala { get; set; }
-        public int IdExpositor { get; set; }
+        public int IdEjeTematico { get; set; }
 
-        public virtual Expositor IdExpositorNavigation { get; set; }
+        public virtual EjeTematico IdEjeTematicoNavigation { get; set; }
         public virtual Sala IdSalaNavigation { get; set; }
     }
 }

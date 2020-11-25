@@ -37,6 +37,7 @@ namespace Evento.Infrastructure.Repositories
         private readonly IRepository<UsuarioRol> _usuarioRolRepository;
         private readonly IRepository<Video> _videoRepository;
         private readonly IRepository<vPersonaExpositor> _vPersonaExpositorRepository;
+        private readonly IRepository<vProgramaEjeTematico> _vProgramaEjeTematicoRepository;
 
         private readonly EventoDevContext _context;
 
@@ -72,6 +73,7 @@ namespace Evento.Infrastructure.Repositories
         public IRepository<UsuarioRol> UsuarioRolRepository => _usuarioRolRepository ?? new BaseRepository<UsuarioRol>(_context);
         public IRepository<Video> VideoRepository => _videoRepository ?? new BaseRepository<Video>(_context);
         public IRepository<vPersonaExpositor> vPersonaExpositorRepository => _vPersonaExpositorRepository ?? new BaseRepository<vPersonaExpositor>(_context);
+        public IRepository<vProgramaEjeTematico> vProgramaEjeTematicoRepository => _vProgramaEjeTematicoRepository ?? new BaseRepository<vProgramaEjeTematico>(_context);
         public void Dispose()
         {
             if (_context != null)

@@ -35,6 +35,7 @@ namespace Evento.Core.Interfaces
         IRepository<UsuarioRol> UsuarioRolRepository { get; }
         IRepository<Video> VideoRepository { get; }
         IRepository<vPersonaExpositor> vPersonaExpositorRepository { get; }
+        IRepository<vProgramaEjeTematico> vProgramaEjeTematicoRepository { get; }
 
         void SaveChanges();
         Task SaveChangesAsync();

@@ -8,6 +8,7 @@ namespace Evento.Core.Entities
         public EjeTematico()
         {
             Expositor = new HashSet<Expositor>();
+            Programa = new HashSet<Programa>();
         }
 
         public string Nombre { get; set; }
@@ -15,5 +16,6 @@ namespace Evento.Core.Entities
 
         public virtual Congreso IdCongresoNavigation { get; set; }
         public virtual ICollection<Expositor> Expositor { get; set; }
+        public virtual ICollection<Programa> Programa { get; set; }
     }
 }

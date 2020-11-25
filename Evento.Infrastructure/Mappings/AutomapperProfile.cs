@@ -114,6 +114,9 @@ namespace Evento.Infrastructure.Mappings
 
             CreateMap<vPersonaExpositor, vPersonaExpositorDto>();
             CreateMap<vPersonaExpositorDto, vPersonaExpositor>();
+
+            CreateMap<vProgramaEjeTematico, vProgramaEjeTematicoDto>();
+            CreateMap<vProgramaEjeTematicoDto, vProgramaEjeTematico>();
         }            
     }
 }

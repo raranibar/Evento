@@ -42,6 +42,7 @@ namespace Evento.Infrastructure.Data
         public virtual DbSet<UsuarioRol> UsuarioRol { get; set; }
         public virtual DbSet<Video> Video { get; set; }
         public virtual DbSet<vPersonaExpositor> VPersonaExpositor { get; set; }
+        public virtual DbSet<vProgramaEjeTematico> vProgramaEjeTematico { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Categoria>(entity =>
@@ -459,11 +460,11 @@ namespace Evento.Infrastructure.Data
                     .IsRequired()
                     .HasMaxLength(500);
 
-                entity.HasOne(d => d.IdExpositorNavigation)
+                entity.HasOne(d => d.IdEjeTematicoNavigation)
                     .WithMany(p => p.Programa)
-                    .HasForeignKey(d => d.IdExpositor)
+                    .HasForeignKey(d => d.IdEjeTematico)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Programa_Expositor");
+                    .HasConstraintName("FK_Programa_EjeTematico");
 
                 entity.HasOne(d => d.IdSalaNavigation)
                     .WithMany(p => p.Programa)
@@ -583,7 +584,21 @@ namespace Evento.Infrastructure.Data
                 entity.Property(e => e.ResumenCV);
                 entity.Property(e => e.Foto);
                 entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
-            });                        
-    }
+            });
+
+            modelBuilder.Entity<vProgramaEjeTematico>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Fecha);
+                entity.Property(e => e.Hora);
+                entity.Property(e => e.UrlZoom);
+                entity.Property(e => e.IdReunionZoom);
+                entity.Property(e => e.CodigoAccesoZoom);
+                entity.Property(e => e.NombreSala);
+                entity.Property(e => e.IdEjeTematico);
+                entity.Property(e => e.NombreEjeTematico);
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+            });
+        }
     }
 }

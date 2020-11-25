@@ -34,7 +34,7 @@ namespace Evento.Api
             services.AddCors();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            var conex = Configuration.GetConnectionString("EventoAzureDev");
+            var conex = Configuration.GetConnectionString("EventoAzurePro");
             var blobs = Configuration.GetConnectionString("EventoStorage");
             services.AddControllers().AddNewtonsoftJson();
             services.AddSingleton(x => new BlobServiceClient(blobs));
@@ -69,6 +69,7 @@ namespace Evento.Api
             services.AddTransient<IUsuarioRolService, UsuarioRolService>();
             services.AddTransient<IVideoService, VideoService>();
             services.AddTransient<IvPersonaExpositorService, vPersonaExpositorService>();
+            services.AddTransient<IvProgramaEjeTematicoService, vProgramaEjeTematicoService>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
