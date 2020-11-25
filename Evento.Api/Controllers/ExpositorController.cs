@@ -67,7 +67,7 @@ namespace Evento.Api.Controllers
             return Ok(response);
         }
 
-        [HttpGet]
+ /*       [HttpGet]
         [Route("eje")]
         public IActionResult GetExpositoresByEje(int id)
         {
@@ -87,7 +87,7 @@ namespace Evento.Api.Controllers
             }
             return Ok(response);
         }
-
+        */
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetExpositor(int id)
@@ -138,8 +138,29 @@ namespace Evento.Api.Controllers
 
 
         [HttpGet]
+        [Route("eje")]
+        public IActionResult GetPersonaExpositor(int id)
+        {
+            var response = new ApiResponse();
+            try
+            {
+                var result = _vPersonaExpositorService.GevPersonaExpositors().Where(x=>x.IdEjeTematico==id);
+                var resultDto = _mapper.Map<IEnumerable<vPersonaExpositorDto>>(result);
+
+                response.Exito = 1;
+                response.Data = resultDto;
+            }
+            catch (Exception ex)
+            {
+                response.Mensaje = ex.Message;
+            }
+            return Ok(response);
+        }
+
+
+        [HttpGet]
         [Route("personaexpositor")]
-        public IActionResult GetPersonaExpositor()
+        public IActionResult GetPersonaExpositorByEje()
         {
             var response = new ApiResponse();
             try
