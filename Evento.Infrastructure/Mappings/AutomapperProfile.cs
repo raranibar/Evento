@@ -111,6 +111,9 @@ namespace Evento.Infrastructure.Mappings
 
             CreateMap<Video, VideoDto>();
             CreateMap<VideoDto, Video>();
+
+            CreateMap<vPersonaExpositor, vPersonaExpositorDto>();
+            CreateMap<vPersonaExpositorDto, vPersonaExpositor>();
         }            
     }
 }

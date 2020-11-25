@@ -41,6 +41,7 @@ namespace Evento.Infrastructure.Data
         public virtual DbSet<Usuario> Usuario { get; set; }
         public virtual DbSet<UsuarioRol> UsuarioRol { get; set; }
         public virtual DbSet<Video> Video { get; set; }
+        public virtual DbSet<vPersonaExpositor> VPersonaExpositor { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Categoria>(entity =>
@@ -566,6 +567,23 @@ namespace Evento.Infrastructure.Data
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Video_Emprendedor");
             });
-        }
+
+            
+            modelBuilder.Entity<vPersonaExpositor>(entity => 
+            { 
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Nombres);
+                entity.Property(e => e.Paterno);
+                entity.Property(e => e.Materno);
+                entity.Property(e => e.Pais);
+                entity.Property(e => e.IdEjeTematico);
+                entity.Property(e => e.NombreExposicion);
+                entity.Property(e => e.Institucion);
+                entity.Property(e => e.ResumenCV);
+                entity.Property(e => e.Foto);
+                entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
+            });                        
+    }
     }
 }
