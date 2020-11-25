@@ -578,6 +578,7 @@ namespace Evento.Infrastructure.Data
                 entity.Property(e => e.Materno);
                 entity.Property(e => e.Pais);
                 entity.Property(e => e.IdEjeTematico);
+                entity.Property(e => e.IdExpositor);
                 entity.Property(e => e.NombreExposicion);
                 entity.Property(e => e.Institucion);
                 entity.Property(e => e.ResumenCV);
