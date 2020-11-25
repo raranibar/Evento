@@ -11,6 +11,7 @@ namespace Evento.Core.Entities
         public string Materno { get; set; }
         public string Pais { get; set; }
         public int IdEjeTematico { get; set; }
+        public int IdExpositor { get; set; }
         public string NombreExposicion { get; set; }
         public string Institucion { get; set; }
         public string ResumenCV { get; set; }
