@@ -16,7 +16,7 @@ namespace Evento.Core.DTO
         public int IdExpositor { get; set; }
         public string NombreExposicion { get; set; }
         public string Institucion { get; set; }
-        public string ResumenCV { get; set; }
+        public string ResumenCv { get; set; }
         public string Foto { get; set; }
         public bool Estado { get; set; }
         public DateTime FechaRegistro { get; set; }
