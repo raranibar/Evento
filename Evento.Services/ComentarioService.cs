@@ -1,7 +1,8 @@
-﻿using Evento.Core.Entities;
+﻿    using Evento.Core.Entities;
 using Evento.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,12 +22,13 @@ namespace Evento.Services
 
         public IEnumerable<Comentario> GetComentarios()
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.ComentarioRepository.GetAll().Where(x => x.Estado == true);
         }
 
-        public Task PostComentario(Comentario o)
+        public async Task PostComentario(Comentario o)
         {
-            throw new NotImplementedException();
+            await this._unitOfWork.ComentarioRepository.Add(o);
+            await this._unitOfWork.SaveChangesAsync();
         }
 
         public Task<bool> PutComentario(Comentario o)

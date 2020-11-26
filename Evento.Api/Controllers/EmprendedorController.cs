@@ -193,7 +193,6 @@ namespace Evento.Api.Controllers
                 response.Mensaje = ex.Message;
             }
             return Ok(response);
-
         }
     }
 }
