@@ -17,12 +17,12 @@ namespace Evento.Services
         }
         public Task<Comentario> GetComentario(int id)
         {
-            throw new NotImplementedException();
+            return this._unitOfWork.ComentarioRepository.GetById(id);
         }
 
         public IEnumerable<Comentario> GetComentarios()
         {
-            return this._unitOfWork.ComentarioRepository.GetAll().Where(x => x.Estado == true);
+            return this._unitOfWork.ComentarioRepository.GetAll().Where(q => q.Estado == true);
         }
 
         public async Task PostComentario(Comentario o)
@@ -31,13 +31,17 @@ namespace Evento.Services
             await this._unitOfWork.SaveChangesAsync();
         }
 
-        public Task<bool> PutComentario(Comentario o)
+        public async Task<bool> PutComentario(Comentario o)
         {
-            throw new NotImplementedException();
+            this._unitOfWork.ComentarioRepository.Update(o);
+            await this._unitOfWork.SaveChangesAsync();
+            return true;
         }
-        public Task<bool> DeleteComentario(int id)
+        public async Task<bool> DeleteComentario(int id)
         {
-            throw new NotImplementedException();
+            await this._unitOfWork.ComentarioRepository.Delete(id);
+            await this._unitOfWork.SaveChangesAsync();
+            return true;
         }
     }
 }
