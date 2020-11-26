@@ -83,6 +83,7 @@ namespace Evento.Api.Controllers
                 var result2 = _raitingService.RaitingEmprendedor(id);
 
                 double punt = suma / result.Count();
+
                 var data = new {
 
                     votos = result.Count(),
