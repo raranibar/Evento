@@ -5,6 +5,7 @@ using Evento.Core.Entities;
 using Evento.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
 
@@ -62,18 +63,38 @@ namespace Evento.Api.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{IdEmprendedor}")]
-        [Route("EmprendedorRaiting")]
-        public IActionResult GetEmprendedorRaiting(int IdEmprendedor)
+        [Route("data")]
+        public IActionResult GetEmprendedorRaiting(int id)
         {
             var response = new ApiResponse();
             try
             {
-                var result = _raitingService.VotosEmprendedor(IdEmprendedor);
+                var result = _raitingService.GetRaitings().Where(x => x.IdEmprendedor == id);
+
+                double suma = 0;
+
+                foreach (var item in result)
+                {
+                    suma += item.Rating;
+                }
+
+
+                var result1 = _raitingService.TotalRaiting();
+                var result2 = _raitingService.RaitingEmprendedor(id);
+
+                double punt = suma / result.Count();
+                var data = new {
+
+                    votos = result.Count(),
+                    suma = suma,
+                    puntaje = (punt.ToString().Length>1)?punt.ToString().Substring(0,3):punt.ToString(),
+                    total = result1,
+                    cantidad= result2
+                };
+
 
                 response.Exito = 1;
-
-                response.Data = result;
+                response.Data = data;
             }
             catch (Exception ex)
             {
