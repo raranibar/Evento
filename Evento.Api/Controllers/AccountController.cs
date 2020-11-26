@@ -128,12 +128,12 @@ namespace Evento.Api.Controllers
                         oEmprendedor = new Emprendedor
                         {
                             IdPersona = oPersona.Id,
-                            Descripcion = "Escribir descripcion",
+                            Descripcion = String.Empty,
                             Latitud = "-21.535132",
                             Longitud = "-64.728431",
                             IdCategoria = 1,
-                            NombreEmprendimiento = "Escribir nombre de emprendimiento",
-                            Ubicacion = "Escribir Ubicacion",
+                            NombreEmprendimiento = String.Empty,
+                            Ubicacion = String.Empty,
                             Estado = false
                         };
 

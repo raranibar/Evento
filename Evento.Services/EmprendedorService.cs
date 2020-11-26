@@ -24,7 +24,7 @@ namespace Evento.Services
 
         public IEnumerable<Emprendedor> GetEmprendedores()
         {
-            return this._unitOfWork.EmprendedorRepository.GetAll();
+            return this._unitOfWork.EmprendedorRepository.GetAll().Where(x=>x.Estado==true);
         }
 
         public async Task  PostEmprendedor(Emprendedor o)
