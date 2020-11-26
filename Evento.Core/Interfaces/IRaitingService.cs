@@ -19,6 +19,7 @@ namespace Evento.Core.Interfaces
         Task<bool> DeleteRaiting(int id);
 
         int TotalRaiting();
-        decimal RaitingEmprendedor(int IdEmprendedor);
+        decimal RaitingEmprendedor(int Id);
+        int VotosEmprendedor(int Id);
     }
 }

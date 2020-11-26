@@ -49,24 +49,19 @@ namespace Evento.Services
             
         }
 
-        public decimal RaitingEmprendedor(int IdEmprendedor)
+        public decimal RaitingEmprendedor(int Id)
         {
-            var lists = _unitOfWork.RaitingRepository.GetAll();
-            var suma = lists.Where(w => w.IdEmprendedor == IdEmprendedor).ToList();           
+            var total = _unitOfWork.RaitingRepository.GetAll().Select(x => x.Rating).Sum();
+            var empre = _unitOfWork.RaitingRepository.GetAll().
+                Where(w => w.IdEmprendedor == Id).
+                Select(s => s.Rating).Sum();
+            return (empre * 100) / total;
+        }
 
-            int total = this.TotalRaiting();
-
-
-            var Lista = _unitOfWork.RaitingRepository.GetAll().
-                GroupBy(q => q.IdEmprendedor).
-                Select(g => new
-                {
-                    IdEmprendedor = g.Key,
-                    Total = (g.Sum(r => r.Rating) * 100) / total
-                }).ToList();
-
-            //return (suma * 100) / total;
-            return 100;
+        public int VotosEmprendedor(int Id)
+        {
+            return _unitOfWork.RaitingRepository.GetAll().
+                Where(w => w.IdEmprendedor == Id).Count();
         }
     }
 }
